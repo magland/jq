@@ -6,13 +6,17 @@
 <script src="jq.js"></script>
 <script src="jqobject.js"></script>
 <script src="jqwidget.js"></script>
+<script src="jqpanelwidget.js"></script>
+<script src="mvtemplateview.js"></script>
+<link rel="stylesheet" type="text/css" href="jq.css">
 <link rel="stylesheet" type="text/css" href="testpage.css">
 
 <script>
 $(document).ready(function() {
-    var X=new JQWidget;
-    X.setDiv('<div id=main_window>Hello from JQ, this is the main window.</div>');
+    var context={};
+    var X=new MVTemplateView(0,context);
     X.showFullBrowser();
+    
 });
 </script>
 

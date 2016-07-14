@@ -9,9 +9,30 @@ function JQWidget(O) {
 	O.position=function() {return m_position;}
 	O.setPosition=function(pos) {setPosition(pos);}
 	O.showFullBrowser=function() {showFullBrowser();}
+	var JQObject_setParent=O.setParent;
+	O.setParent=function(parent) {setParent(parent);}
+	O.parentWidget=function() {return parentWidget();}
+
+
+	O.onMousePressEvent=function(handler) {onMousePressEvent(handler);}
+	O.onMouseReleaseEvent=function(handler) {onMouseReleaseEvent(handler);}
+	O.onMouseMoveEvent=function(handler) {onMouseMoveEvent(handler);}
+	O.onWheelEvent=function(handler) {onWheelEvent(handler);}
 
 	function setDiv(div_or_str) {
 		m_div=$(div_or_str);
+		m_div.mousedown(function(e) {mouse_actions.emit('press',jq_mouse_event($(this),e));});
+		m_div.mouseup(function(e) {mouse_actions.emit('release',jq_mouse_event($(this),e));});
+		m_div.mousemove(function(e) {mouse_actions.emit('move',jq_mouse_event($(this),e));});
+		m_div.on('dragstart',function() {return false;});
+		m_div.bind('mousewheel', function(e){
+			console.log('wheel 1');
+			wheel_actions.emit('wheel',jq_wheel_event($(this),e));
+    	});
+    	m_div.css({overflow:"hidden"});
+    	if (O.parentWidget()) {
+    		O.parentWidget().div().append(m_div);
+    	}
 		set_div_geom();
 	}
 	function setSize(size) {
@@ -52,12 +73,60 @@ function JQWidget(O) {
 		$('body').append(O.div());
 		set_size();
 	}
+	function setParent(parent) {
+		JQObject_setParent(parent);
+		if (parent.isWidget()) {
+			parent.div().append(O.div());
+		}
+	}
+	function parentWidget() {
+		if (!O.parent()) return null;
+		if (!O.parent().isWidget()) return null;
+		return O.parent();
+	}
+	var mouse_actions=new JQObject;
+	var wheel_actions=new JQObject;
+	function onMousePressEvent(handler) {
+		JQ.connectToCallback(mouse_actions,'press',function(sender,args) {
+			handler(args);
+		});
+	}
+	function onMouseReleaseEvent(handler) {
+		JQ.connectToCallback(mouse_actions,'release',function(sender,args) {
+			handler(args);
+		});
+	}
+	function onMouseMoveEvent(handler) {
+		JQ.connectToCallback(mouse_actions,'move',function(sender,args) {
+			handler(args);
+		});
+	}
+	function onWheelEvent(handler) {
+		JQ.connectToCallback(wheel_actions,'wheel',function(sender,args) {
+			handler(args);
+		});
+	}
+	function jq_mouse_event(elmt,e) {
+		//var parentOffset = $(this).parent().offset(); 
+		var offset=elmt.offset(); //if you really just want the current element's offset
+		var posx = e.pageX - offset.left;
+		var posy = e.pageY - offset.top;
+		return {
+			pos:[posx,posy]
+		}
+	}
+	function jq_wheel_event(elmt,e) {
+		return {
+			delta:e.originalEvent.wheelDelta
+		};
+	}
 
 	O._set_is_widget(true);
-	var m_div=$('<div></div>');
+	var m_div=null;
 	var m_position=[0,0];
 	var m_size=[0,0];
-	set_div_geom();
+
+	O.setDiv($('<div></div>'));
 
 	function set_div_geom() {
 		m_div.css({

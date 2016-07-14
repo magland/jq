@@ -3,6 +3,7 @@ var JQ=new JQCore();
 function JQCore() {
 	this.connect=function(sender,signal_name,receiver,signal_or_slot_name) {connect(sender,signal_name,receiver,signal_or_slot_name);}
 	this.connectToCallback=function(sender,signal_name,callback) {connectToCallback(sender,signal_name,callback);}
+	this.clone=function(obj_or_array) {return clone(obj_or_array);}
 
 	this._OM=new JQObjectManager();
 
@@ -18,6 +19,9 @@ function JQCore() {
 		tmp.setParent(sender); //so it gets destroyed
 		tmp.declareSlot('callback',callback);
 		JQ.connect(sender,signal_name,tmp,'callback');
+	}
+	function clone(obj_or_array) {
+		return JSON.parse(JSON.stringify(obj_or_array));
 	}
 }
 

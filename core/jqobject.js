@@ -5,7 +5,7 @@ function JQObject(O) {
 	O.parent=function() {return parent();}
 	O.setProperty=function(name,value) {setProperty(name,value);}
 	O.property=function(name) {return property(name);}
-	O.emit=function(signal_name) {emit(signal_name);}
+	O.emit=function(signal_name,args) {emit(signal_name,args);}
 	O.declareSlot=function(slot_name,func) {declareSlot(slot_name,func);}
 	O.destroy=function() {destroy();}
 	O.isWidget=function() {return m_is_widget;}
@@ -35,9 +35,9 @@ function JQObject(O) {
 		else
 			return null;
 	}
-	function emit(signal_name,params) {
+	function emit(signal_name,args) {
 		if (signal_name in m_signals) {
-			m_signals[signal_name]._emit(params);
+			m_signals[signal_name]._emit(args);
 		}
 	}
 	function declareSlot(slot_name,func) {
@@ -72,12 +72,12 @@ function JQObject(O) {
 		var SS=m_signals[signal_name];
 		SS._add_signal_or_slot(receiver,signal_or_slot_name);
 	}
-	O._invoke_signal_or_slot=function(signal_or_slot_name,sender,params) {
+	O._invoke_signal_or_slot=function(signal_or_slot_name,sender,args) {
 		if (signal_or_slot_name in m_slots) {
-			m_slots[signal_or_slot_name]._invoke(sender,params);
+			m_slots[signal_or_slot_name]._invoke(sender,args);
 		}
 		else if (signal_or_slot_name in m_signals) {
-			m_signals[signal_or_slot_name]._emit(params);
+			m_signals[signal_or_slot_name]._emit(args);
 		}
 	}
 	O._set_is_widget=function() {m_is_widget=true;}
@@ -94,7 +94,7 @@ function JQObject(O) {
 }
 
 function JQSignal(object) {
-	this._emit=function(params) {
+	this._emit=function(args) {
 		for (var i=0; i<m_signals_or_slots.length; i++) {
 			var receiver_id=m_signals_or_slots[i].receiver_id;
 			var signal_or_slot_name=m_signals_or_slots[i].signal_or_slot_name;
@@ -103,7 +103,7 @@ function JQSignal(object) {
 				//todo remove this item so we don't have to check in future
 				return;
 			}
-			receiver._invoke_signal_or_slot(signal_or_slot_name,object,params); //object is the sender
+			receiver._invoke_signal_or_slot(signal_or_slot_name,object,args); //object is the sender
 		}
 	}
 	this._add_signal_or_slot=function(receiver,signal_or_slot_name) {
@@ -116,8 +116,8 @@ function JQSignal(object) {
 }
 
 function JQSlot(object,func) {
-	this._invoke=function(sender,params) {
-		func(sender,params);
+	this._invoke=function(sender,args) {
+		func(sender,args);
 	}
 }
 

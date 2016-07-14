@@ -1,7 +1,6 @@
-#main_window {
-	background-color: blue;
-	color:white;
-	border: solid 1px gray;
+#test_panel {
+	background-color: lightblue;
+	color:red;
 }
 
 body {
