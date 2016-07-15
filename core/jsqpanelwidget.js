@@ -6,6 +6,7 @@ function JSQPanelWidget(O) {
 	O.rowCount=function() {return rowCount();}
 	O.columnCount=function() {return columnCount();}
 	O.setSpacing=function(row_spacing,col_spacing) {m_row_spacing=row_spacing; m_col_spacing=m_col_spacing; update_layout();}
+	O.setMargins=function(row_margin,col_margin) {m_row_margin=row_margin; m_col_margin=col_margin;}
 
 	O.onMousePressEvent(mousePressEvent);
 	O.onMouseReleaseEvent(mouseReleaseEvent);
