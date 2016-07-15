@@ -2,6 +2,7 @@ function JSQPanelWidget(O) {
 	if (!O) O=this;
 	JSQWidget(O);
 
+	O.clearPanels=function() {clearPanels();}
 	O.addPanel=function(row,col,W) {addPanel(row,col,W);}
 	O.rowCount=function() {return rowCount();}
 	O.columnCount=function() {return columnCount();}
@@ -42,11 +43,19 @@ function JSQPanelWidget(O) {
 			m_panels[i].pixel_geom=[x1,y1,W0,H0];
 		}
 	}
+	function clearPanels() {
+		for (var i=0; i<m_panels.length; i++) {
+			m_panels[i].destroy();
+		}
+		m_panels=[];
+		update_layout();
+	}
 	function addPanel(row,col,W) {
 		var panel={row:row,col:col,W:W,pixel_geom:[0,0,0,0]};
 		m_panels.push(panel);
 		O.div().append(W.div());
 		W.div().addClass("jsqpanelwidget_panel");
+		/// TODO, use a queued signal so we don't update layout after every add or resize
 		update_layout();
 	}
 	function rowCount() {

@@ -13,6 +13,7 @@ function Mda() {
 	this.N3=function() {return m_dims[2];}
 	this.N4=function() {return m_dims[3];}
 	this.N5=function() {return m_dims[4];}
+	this.totalSize=function() {return m_total_size;}
 	this.value=function(i1,i2,i3,i4,i5) {
 		if (i2===undefined) {
 			return m_data[i1];
@@ -64,11 +65,52 @@ function Mda() {
 		ret.setData(this.dataCopy());
 		return ret;
 	}
+	this.reshape=function(n1,n2,n3,n4,n5) {
+		n2=n2||1; n3=n3||1; n4=n4||1; n5=n5||1;
+		var tot=n1*n2*n3*n4*n5;
+		if (tot!=m_total_size) {
+			console.error('Unable to reshape... incompatible size: '+n1+'x'+n2+'x'+n3+'x'+n4+'x'+n5+'    '+this.N1()+'x'+this.N2()+'x'+this.N3()+'x'+this.N4()+'x'+this.N5());
+			return;
+		}
+		m_dims[0]=n1; m_dims[1]=n2; m_dims[2]=n3; m_dims[3]=n4; m_dims[4]=n5;		
+	}
 	this.getChunk=function(i,size) {
 		var ret=new Mda();
 		ret.allocate(size,1);
-		ret.setData(m_data.slice(i,i+size));
+		console.log(m_data);
+		ret.setData(m_data.subarray(i,i+size));
 		return ret;
+	}
+	this.subArray=function(arg1,arg2,arg3,arg4,arg5,arg6) {
+		if (arg3===undefined) {
+			return that.getChunk(arg1,arg2);
+		}
+		else if (arg5==undefined) {
+			if ((arg3!=that.N1())||(arg1!=0)) {
+				console.error('This case not supported yet: subArray.');
+				return null;
+			}
+			var iii=arg2*that.N1();
+			var sss=arg4*that.N1();
+			var ret=this.getChunk(iii,sss);
+			ret.reshape(arg3,arg4);
+			return ret;
+		}
+		else {
+			if ((arg4!=that.N1())||(arg1!=0)) {
+				console.error('This case not supported yet: subArray.');
+				return null;
+			}
+			if ((arg5!=that.N2())||(arg2!=0)) {
+				console.error('This case not supported yet: subArray.');
+				return null;
+			}
+			var iii=arg3*that.N1()*that.N2();
+			var sss=arg6*that.N1()*that.N2();
+			var ret=this.getChunk(iii,sss);
+			ret.reshape(arg4,arg5,arg6);
+			return ret;
+		}
 	}
 	this.load=function(url,callback) {
 		console.log('loading: '+url);
@@ -101,6 +143,11 @@ function Mda() {
 					m_data=new Float32Array(result.slice(header_size));
 					callback({success:true});
 					return;
+				}
+				else if (dtype=='float64') {
+					m_data=new Float64Array(result.slice(header_size));
+					callback({success:true});
+					return;	
 				}
 				else {
 					callback({success:false,error:'Unsupported data type: '+dtype});

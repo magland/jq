@@ -10,7 +10,8 @@ function RemoteReadMda() {
 	this.N3=function() {return get_dim(3);}
 	this.checksum=function() {return checksum();}
 	///Retrieve a chunk of the vectorized data of size 1xN starting at position i
-	this.readChunk=function(i,size,callback) {return readChunk(i,size,callback);} 
+	this.readChunk=function(i,size,callback) {readChunk(i,size,callback);} 
+	this.toMda=function(callback) {toMda(callback);}
 
 	function initialize(callback) {
 		if (!callback) callback=function() {};
@@ -61,7 +62,7 @@ function RemoteReadMda() {
 	}
 	function get_dim(d) {
 		if (!m_initialized) {
-			console.error('RemoteReadMda is not initialized: '+m_path);
+			console.error('RemoteReadMda is not initialized -- cannot get dimensions: '+m_path);
 			return 1;
 		}
 		if (d==1) return m_info.N1;
@@ -70,40 +71,58 @@ function RemoteReadMda() {
 		return 1;
 	}
 	function readChunk(i,size,callback) {
-		//don't make excessive calls... once we fail, that's it.
-		console.log('------');
-		if ((!m_initialized)||(!m_initialized_success)) {
-			callback({success:false,error:'RemoteReadMda not initialized successfully'});
-			return;
-		}
-		if (m_download_failed) {
-			callback({success:false,error:'RemoteReadMda: Download already failed.'});
-			return;
-		}
-		console.log('------');
-		var X=new Mda();
-		X.allocate(size,1);
-		var ii1 = i; //start index of the remote array
-    	var ii2 = i + size - 1; //end index of the remote array
-    	var jj1 = Math.floor(ii1 / m_download_chunk_size); //start chunk index of the remote array
-    	var jj2 = Math.floor(ii2 / m_download_chunk_size); //end chunk index of the remote array
-    	console.log('------');
-    	if (jj1 == jj2) { //in this case there is only one chunk we need to worry about
-        	download_chunk_at_index(jj1,function(ret) { //download the single chunk
-        		console.log('------');
-        		if (!ret.success) {
-        			callback(ret);
-        			m_download_failed=true;
-        			return;
-        		}
-        		callback({success:true,chunk:ret.chunk.getChunk(ii1-jj1*m_download_chunk_size,size)}); //starting reading at the offset of ii1 relative to the start index of the chunk
-        		return;
-        	}); 
-        }
-        else {
-        	callback({success:false,error:'RemoteReadMda: Cannot handle this case yet'});
-        	return;	
-        }
+		that.initialize(function() {
+			//don't make excessive calls... once we fail, that's it.
+			console.log('------');
+			if ((!m_initialized)||(!m_initialized_success)) {
+				callback({success:false,error:'RemoteReadMda not initialized successfully'});
+				return;
+			}
+			if (m_download_failed) {
+				callback({success:false,error:'RemoteReadMda: Download already failed.'});
+				return;
+			}
+			console.log('------');
+			var X=new Mda();
+			X.allocate(size,1);
+			var ii1 = i; //start index of the remote array
+	    	var ii2 = i + size - 1; //end index of the remote array
+	    	var jj1 = Math.floor(ii1 / m_download_chunk_size); //start chunk index of the remote array
+	    	var jj2 = Math.floor(ii2 / m_download_chunk_size); //end chunk index of the remote array
+	    	console.log('------');
+	    	if (jj1 == jj2) { //in this case there is only one chunk we need to worry about
+	        	download_chunk_at_index(jj1,function(ret) { //download the single chunk
+	        		console.log('------');
+	        		if (!ret.success) {
+	        			callback(ret);
+	        			m_download_failed=true;
+	        			return;
+	        		}
+	        		callback({success:true,chunk:ret.chunk.getChunk(ii1-jj1*m_download_chunk_size,size)}); //starting reading at the offset of ii1 relative to the start index of the chunk
+	        		return;
+	        	}); 
+	        }
+	        else {
+	        	callback({success:false,error:'RemoteReadMda: Cannot handle this case yet'});
+	        	return;	
+	        }
+	    });
+    }
+    function toMda(callback) {
+    	that.initialize(function() {
+    		if ((!m_initialized)||(!m_initialized_success)) {
+				callback({success:false,error:'RemoteReadMda not initialized successfully'});
+				return;
+			}
+    		that.readChunk(0,that.N1()*that.N2()*that.N3(),function(res) {
+    			if (res.chunk) {
+	    			res.mda=res.chunk;
+	    			res.chunk=undefined;
+	    			res.mda.reshape(that.N1(),that.N2(),that.N3());
+	    		}
+    			callback(res);
+    		});
+    	});
     }
     function download_chunk_at_index(ii,callback) {
     	var Ntot=m_info.N1*m_info.N2*m_info.N3;
@@ -125,7 +144,7 @@ function RemoteReadMda() {
     		return;
     	}
     	var url=m_path;
-    	var url0=url+'?readChunk&output=text&index='+(ii * m_download_chunk_size)+'&size='+(size)+'&datatype='+(m_remote_datatype);
+    	var url0=url+'?a=readChunk&output=text&index='+(ii * m_download_chunk_size)+'&size='+(size)+'&datatype='+(m_remote_datatype);
     	$.get(url0,function(binary_url) {
     		console.log('@@@@@@@@@@@@@@@@@@@@@@@@');
     		console.log(url0);
