@@ -1,6 +1,6 @@
-function JQPanelWidget(O) {
+function JSQPanelWidget(O) {
 	if (!O) O=this;
-	JQWidget(O);
+	JSQWidget(O);
 
 	O.addPanel=function(row,col,W) {addPanel(row,col,W);}
 	O.rowCount=function() {return rowCount();}
@@ -20,7 +20,7 @@ function JQPanelWidget(O) {
 	var m_viewport_geom=[-0.1,0,0.9,1];
 	var m_current_panel_index=-1;
 
-	JQ.connectToCallback(O,'sizeChanged',update_layout);
+	JSQ.connect(O,'sizeChanged',O,update_layout);
 	function update_layout() {
 		var num_rows=O.rowCount();
 		var num_cols=O.columnCount();
@@ -45,7 +45,7 @@ function JQPanelWidget(O) {
 		var panel={row:row,col:col,W:W,pixel_geom:[0,0,0,0]};
 		m_panels.push(panel);
 		O.div().append(W.div());
-		W.div().addClass("jpanelwidget_panel");
+		W.div().addClass("jsqpanelwidget_panel");
 		update_layout();
 	}
 	function rowCount() {
@@ -65,7 +65,7 @@ function JQPanelWidget(O) {
 	function zoom(factor) {
 		var current_panel_geom=[0,0,1,1];
 		if ((m_current_panel_index>=0)&&(m_current_panel_index<m_panels.length)) {
-			current_panel_geom=JQ.clone(m_panels[m_current_panel_index].pixel_geom);
+			current_panel_geom=JSQ.clone(m_panels[m_current_panel_index].pixel_geom);
 		}
 
 		if (rowCount()>1) {
@@ -78,7 +78,7 @@ function JQPanelWidget(O) {
 
 		var new_current_panel_geom=[0,0,1,1];
 		if ((m_current_panel_index>=0)&&(m_current_panel_index<m_panels.length)) {
-			new_current_panel_geom=JQ.clone(m_panels[m_current_panel_index].pixel_geom);
+			new_current_panel_geom=JSQ.clone(m_panels[m_current_panel_index].pixel_geom);
 		}
 		var dx=new_current_panel_geom[0]+new_current_panel_geom[2]/2-current_panel_geom[0]-current_panel_geom[2]/2;
 		var dy=new_current_panel_geom[1]+new_current_panel_geom[3]/2-current_panel_geom[1]-current_panel_geom[3]/2;
@@ -93,10 +93,10 @@ function JQPanelWidget(O) {
 		m_current_panel_index=ind;
 		for (var ii=0; ii<m_panels.length; ii++) {
 			if (ii==ind) {
-				m_panels[ii].W.div().addClass("jpanelwidget_current_panel");
+				m_panels[ii].W.div().addClass("jsqpanelwidget_current_panel");
 			}
 			else {
-				m_panels[ii].W.div().removeClass("jpanelwidget_current_panel");	
+				m_panels[ii].W.div().removeClass("jsqpanelwidget_current_panel");	
 			}
 		}
 
@@ -113,13 +113,12 @@ function JQPanelWidget(O) {
 		return -1;
 	}
 
-
 	var press_anchor=[-1,-1];
 	var press_anchor_viewport_geom=[0,0,1,1];
 	var is_dragging=false;
 	function mousePressEvent(evt) {
-		press_anchor=JQ.clone(evt.pos);
-		press_anchor_viewport_geom=JQ.clone(m_viewport_geom);
+		press_anchor=JSQ.clone(evt.pos);
+		press_anchor_viewport_geom=JSQ.clone(m_viewport_geom);
 		is_dragging=false;
 	}
 	function mouseReleaseEvent(evt) {

@@ -1,8 +1,9 @@
-function jqmain(query) {
+function jsqmain(query) {
 	var context={};
     var X=new MVTemplateView(0,context);
     X.showFullBrowser();
 
+    /*
     var A=new Mda();
     var url='http://datalaboratory.org:8020/mdaserver/tmp_short_term/ce42c74996b2b729736b49c32d690a4c97132ff0.float32.0.13104.mda';
     A.load(url,function(res) {
@@ -21,4 +22,5 @@ function jqmain(query) {
     		console.log(chunk.value(0));
     	});
     });
+    */
 }

@@ -1,9 +1,9 @@
 var fs=require('fs');
 
-function jqmake(opts) {
-	var html_text=read_text_file('jqmake.template.html');
+function jsqmake(opts) {
+	var html_text=read_text_file('jsqmake.template.html');
 	if (!html_text) {
-		console.error('Unable to read jqmake.template.html');
+		console.error('Unable to read jsqmake.template.html');
 		return false;
 	}
 	var include_text=get_include_text(opts);
@@ -76,4 +76,4 @@ function jqmake(opts) {
 	}
 }
 
-module.exports.jqmake = jqmake;
+module.exports.jsqmake = jsqmake;

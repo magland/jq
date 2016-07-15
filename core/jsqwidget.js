@@ -1,6 +1,6 @@
-function JQWidget(O) {
-	if (!O) O=this;
-	JQObject(O);
+function JSQWidget(O) {
+	O=O||this;
+	JSQObject(O);
 	
 	O.div=function() {return m_div;}
 	O.setDiv=function(div) {setDiv(div);}
@@ -9,10 +9,9 @@ function JQWidget(O) {
 	O.position=function() {return m_position;}
 	O.setPosition=function(pos) {setPosition(pos);}
 	O.showFullBrowser=function() {showFullBrowser();}
-	var JQObject_setParent=O.setParent;
+	var JSQObject_setParent=O.setParent;
 	O.setParent=function(parent) {setParent(parent);}
 	O.parentWidget=function() {return parentWidget();}
-
 
 	O.onMousePressEvent=function(handler) {onMousePressEvent(handler);}
 	O.onMouseReleaseEvent=function(handler) {onMouseReleaseEvent(handler);}
@@ -64,7 +63,7 @@ function JQWidget(O) {
 		}
 
 		var X=new BrowserWindow();
-		JQ.connectToCallback(X,'sizeChanged',set_size);
+		JSQ.connect(X,'sizeChanged',O,set_size);
 		function set_size() {
 			var ss=X.size();
 			O.setSize([ss[0]-opts.margin_left-opts.margin_right,ss[1]-opts.margin_top-opts.margin_bottom]);
@@ -74,7 +73,7 @@ function JQWidget(O) {
 		set_size();
 	}
 	function setParent(parent) {
-		JQObject_setParent(parent);
+		JSQObject_setParent(parent);
 		if (parent.isWidget()) {
 			parent.div().append(O.div());
 		}
@@ -84,25 +83,25 @@ function JQWidget(O) {
 		if (!O.parent().isWidget()) return null;
 		return O.parent();
 	}
-	var mouse_actions=new JQObject;
-	var wheel_actions=new JQObject;
+	var mouse_actions=new JSQObject;
+	var wheel_actions=new JSQObject;
 	function onMousePressEvent(handler) {
-		JQ.connectToCallback(mouse_actions,'press',function(sender,args) {
+		JSQ.connect(mouse_actions,'press',O,function(sender,args) {
 			handler(args);
 		});
 	}
 	function onMouseReleaseEvent(handler) {
-		JQ.connectToCallback(mouse_actions,'release',function(sender,args) {
+		JSQ.connect(mouse_actions,'release',O,function(sender,args) {
 			handler(args);
 		});
 	}
 	function onMouseMoveEvent(handler) {
-		JQ.connectToCallback(mouse_actions,'move',function(sender,args) {
+		JSQ.connect(mouse_actions,'move',O,function(sender,args) {
 			handler(args);
 		});
 	}
 	function onWheelEvent(handler) {
-		JQ.connectToCallback(wheel_actions,'wheel',function(sender,args) {
+		JSQ.connect(wheel_actions,'wheel',O,function(sender,args) {
 			handler(args);
 		});
 	}
@@ -141,7 +140,7 @@ function JQWidget(O) {
 
 function BrowserWindow(O) {
 	if (!O) O=this;
-	JQObject(O);
+	JSQObject(O);
 
 	O.size=function() {return [$(window).width(),$(window).height()];}
 
