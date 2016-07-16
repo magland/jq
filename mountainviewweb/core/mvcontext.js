@@ -37,7 +37,7 @@ function MVContext(O) {
     this.setSelectedClusters=function(ks) {setSelectedClusters(JSQ.clone(ks));};
     this.setCurrentTimepoint=function(t) {setCurrentTimepoint(t);};
     this.setCurrentTimeRange=function(range) {setCurrentTimeRange(JSQ.clone(range));};
-    this.clickCluster=function(k) {clickCluster(k);};
+    this.clickCluster=function(k,modifiers) {clickCluster(k,modifiers);};
 
     function setCurrentEvent(E) {
     	if (JSQ.compare(E,m_current_event)) return;
@@ -67,7 +67,7 @@ function MVContext(O) {
     function clickCluster(k,modifiers) {
     	if (k<0) return;
     	var tmp=JSQ.clone(m_selected_clusters);
-    	if (modifiers=='control') {
+    	if (modifiers.ctrlKey) {
     		if (k in m_selected_clusters) {
     			delete tmp[k];
     			O.setSelectedClusters(tmp);

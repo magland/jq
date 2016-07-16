@@ -9,11 +9,13 @@ function MVPanelWidget(O) {
 	O.setSpacing=function(row_spacing,col_spacing) {m_row_spacing=row_spacing; m_col_spacing=m_col_spacing; update_layout();};
 	O.setMargins=function(row_margin,col_margin) {m_row_margin=row_margin; m_col_margin=col_margin;};
 
-	O.onPanelClicked=function(handler) {JSQ.connect(O,'panel_clicked',O,function(sender,args) {handler(args);});};
+	O.onPanelClicked=function(handler) {JSQ.connect(O,'panel_clicked',O,function(sender,args) {handler(args.ind,args.modifiers);});};
 
 	O.onMousePress(mousePress);
 	O.onMouseRelease(mouseRelease);
 	O.onMouseMove(mouseMove);
+	O.onMouseEnter(mouseEnter);
+	O.onMouseLeave(mouseLeave);
 	O.onWheel(wheel);
 
 	var m_panels=[];
@@ -26,6 +28,7 @@ function MVPanelWidget(O) {
 
 	JSQ.connect(O,'sizeChanged',O,update_layout);
 	function update_layout() {
+		correct_viewport_geom();
 		var num_rows=O.rowCount();
 		var num_cols=O.columnCount();
 		if (!num_rows) return;
@@ -43,6 +46,28 @@ function MVPanelWidget(O) {
 			m_panels[i].W.setSize([W0,H0]);
 			m_panels[i].W.setPosition([x1,y1]);
 			m_panels[i].pixel_geom=[x1,y1,W0,H0];
+		}
+	}
+	function correct_viewport_geom() {
+		if (m_viewport_geom[2]<1) {
+			m_viewport_geom[0]=0;
+			m_viewport_geom[2]=1;
+		}
+		if (m_viewport_geom[0]+m_viewport_geom[2]<1) {
+			m_viewport_geom[0]=1-m_viewport_geom[2];
+		}
+		if (m_viewport_geom[0]>0) {
+			m_viewport_geom[0]=0;
+		}
+		if (m_viewport_geom[3]<1) {
+			m_viewport_geom[1]=0;
+			m_viewport_geom[3]=1;
+		}
+		if (m_viewport_geom[1]+m_viewport_geom[3]<1) {
+			m_viewport_geom[1]=1-m_viewport_geom[3];
+		}
+		if (m_viewport_geom[1]>0) {
+			m_viewport_geom[1]=0;
 		}
 	}
 	function clearPanels() {
@@ -99,6 +124,7 @@ function MVPanelWidget(O) {
 			m_viewport_geom[1]-=dy/O.size()[1];
 			update_layout();
 		}
+		correct_viewport_geom();
 	}
 	function set_current_panel_index(ind) {
 		if (m_current_panel_index==ind) return;
@@ -138,7 +164,7 @@ function MVPanelWidget(O) {
 		if (!is_dragging) {
 			var ind=panel_index_at(evt.pos);
 			set_current_panel_index(ind);
-			O.emit('panel_clicked',ind);
+			O.emit('panel_clicked',{ind:ind,modifiers:evt.modifiers});
 		}
 		is_dragging=false;
 	}
@@ -160,6 +186,12 @@ function MVPanelWidget(O) {
 				update_layout();
 			}
 		}
+	}
+	function mouseEnter(evt) {
+
+	}
+	function mouseLeave(evt) {
+		press_anchor=[-1,-1];
 	}
 	function wheel(evt) {
 		if (evt.delta>0) {

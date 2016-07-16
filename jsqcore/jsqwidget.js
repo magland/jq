@@ -108,8 +108,8 @@ function JSQWidget(O) {
 		O.div().removeClass('hovered');
 	}
 
-	var mouse_actions=new JSQObject;
-	var wheel_actions=new JSQObject;
+	var mouse_actions=new JSQObject();
+	var wheel_actions=new JSQObject();
 	function onMousePress(handler) {
 		JSQ.connect(mouse_actions,'press',O,function(sender,args) {
 			handler(args);
@@ -146,12 +146,13 @@ function JSQWidget(O) {
 		var posx = e.pageX - offset.left;
 		var posy = e.pageY - offset.top;
 		return {
-			pos:[posx,posy]
-		}
+			pos:[posx,posy],
+			modifiers:{ctrlKey:e.ctrlKey}
+		};
 	}
 	function jq_wheel_event(elmt,e) {
 		return {
-			delta:e.original.wheelDelta
+			delta:e.originalEvent.wheelDelta
 		};
 	}
 	function setVisible(visible) {

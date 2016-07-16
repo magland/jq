@@ -9,6 +9,8 @@ function MVTemplatesView(O,mvcontext) {
 
 	JSQ.connect(O,'sizeChanged',O,update_layout);
 	JSQ.connect(mvcontext,'optionsChanged',O,O.recalculate);
+	JSQ.connect(mvcontext,'currentClusterChanged',O,update_highlighting);
+	JSQ.connect(mvcontext,'selectedClustersChanged',O,update_highlighting);
 
 	var m_panel_widget=new MVPanelWidget();
 	m_panel_widget.setParent(O);
@@ -23,6 +25,18 @@ function MVTemplatesView(O,mvcontext) {
 		var ss=O.size();
 		m_panel_widget.setPosition([5,5]);
 		m_panel_widget.setSize([ss[0]-10,ss[1]-10]);
+	}
+	function update_highlighting() {
+		var k=O.mvContext().currentCluster();
+		var ks=O.mvContext().selectedClusters();
+		for (var i=0; i<m_template_panels.length; i++) {
+			var Y=m_template_panels[i];
+			var k0=Y.property('k');
+			if (k0==k) Y.div().addClass('current');
+			else Y.div().removeClass('current');
+			if (k0 in ks) Y.div().addClass('selected');
+			else Y.div().removeClass('selected');
+		}
 	}
 
 	function setTemplates(templates) {
@@ -41,10 +55,10 @@ function MVTemplatesView(O,mvcontext) {
 		}
 		update_scale_factors();
 	}
-	function panelClicked(ind) {
+	function panelClicked(ind,modifiers) {
 		if (ind in m_template_panels) {
 			console.log('panel_clicked: '+ind);
-			O.mvContext.clickCluster(m_template_panels[ind].property('k'));
+			O.mvContext().clickCluster(m_template_panels[ind].property('k'),modifiers);
 		}
 
 	}
@@ -190,3 +204,4 @@ function MVTemplatesViewPanel(O) {
 	    return m_channel_colors[(m - 1) % m_channel_colors.length];	
 	}
 }
+
