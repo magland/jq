@@ -21,6 +21,11 @@ function JSQWidget(O) {
 	O.onMouseMoveEvent=function(handler) {onMouseMoveEvent(handler);};
 	O.onWheelEvent=function(handler) {onWheelEvent(handler);};
 
+	JSQ.connect(O,'destroyed',O,on_destroyed);
+	function on_destroyed() {
+		m_div.remove();
+	}
+
 	function setDiv(div_or_str) {
 		m_div=$(div_or_str);
 		m_div.mousedown(function(e) {mouse_actions.emit('press',jq_mouse_event($(this),e));});

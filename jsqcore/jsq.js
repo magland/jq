@@ -1,14 +1,15 @@
 var JSQ=new JSQCore();
 
 function JSQCore() {
-	this.connect=function(sender,signal,receiver,callback,connection_type) {connect(sender,signal,receiver,callback,connection_type);}
-	this.emit=function(sender,signal_name,args) {emit(sender,signal_name,args);}
-	this.clone=function(obj_or_array) {return clone(obj_or_array);}
-	this.computeSha1SumOfString=function(str) {return computeSha1SumOfString(str);}
+	this.connect=function(sender,signal,receiver,callback,connection_type) {connect(sender,signal,receiver,callback,connection_type);};
+	this.emit=function(sender,signal_name,args) {emit(sender,signal_name,args);};
+	this.clone=function(obj_or_array) {return clone(obj_or_array);};
+	this.compare=function(X,Y) {return compare(X,Y);};
+	this.computeSha1SumOfString=function(str) {return computeSha1SumOfString(str);};
 
-	this._object=function(id) {return object(id);}
-	this._addObject=function(id,obj) {addObject(id,obj);}
-	this._removeObject=function(id) {removeObject(id);}
+	this._object=function(id) {return object(id);};
+	this._addObject=function(id,obj) {addObject(id,obj);};
+	this._removeObject=function(id) {removeObject(id);};
 
 	function connect(sender,signal_name,receiver,callback,connection_type) {
 		m_connection_manager.connect(sender,signal_name,receiver,callback,connection_type);
@@ -18,6 +19,9 @@ function JSQCore() {
 	}
 	function clone(obj_or_array) {
 		return JSON.parse(JSON.stringify(obj_or_array));
+	}
+	function compare(X,Y) {
+		return (JSON.stringify(X)==JSON.stringify(Y));
 	}
 	function object(id) {
 		if (id in m_objects) {
