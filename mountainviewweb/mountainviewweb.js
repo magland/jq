@@ -1,8 +1,6 @@
 function jsqmain(query) {
 	var context={};
 
-
-
     var timeseries_url='http://datalaboratory.org:8020/mdaserver/franklab/results/20160426_r1_nt16/ms_20160605/pre2.mda';
     var firings_url='http://datalaboratory.org:8020/mdaserver/franklab/results/20160426_r1_nt16/ms_20160605/firings_new.mda';
     var mlproxy_url='http://datalaboratory.org:8020';
@@ -18,7 +16,9 @@ function jsqmain(query) {
 
     var VV=new MVTemplatesView(0,mvcontext);
     WW.setView(VV);
-    
+
+    var GCW=new GeneralControlWidget(0,mvcontext,WW);
+    WW.addControlWidget(GCW);
 
     //var firings_url='http://localhost:8020/mdaserver/franklab/2016_04_08/sort_dl12_20151208_NNF_r1_tet16_17/output_tet16/firings.mda';
 

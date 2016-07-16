@@ -7,7 +7,7 @@ function MVControlPanel(O) {
 	JSQ.connect(O,'sizeChanged',O,update_layout);
 
 	function addControlWidget(W) {
-		m_control_widgets=W;
+		m_control_widgets.push(W);
 		W.setParent(O);
 		update_layout();
 	}

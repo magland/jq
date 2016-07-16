@@ -45,7 +45,7 @@ function MVPanelWidget(O) {
 	}
 	function clearPanels() {
 		for (var i=0; i<m_panels.length; i++) {
-			m_panels[i].destroy();
+			m_panels[i].W.destroy();
 		}
 		m_panels=[];
 		update_layout();

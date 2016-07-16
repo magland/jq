@@ -16,10 +16,7 @@ function MVMainWindow(O,mvcontext) {
 		m_view.destroy();
 		m_view=V;
 		V.setParent(O);
-		V.prepareCalculation();
-	    V.runCalculation({},function(res) {
-	        V.onCalculationFinished();
-	    });
+		V.recalculate();
 	    update_layout();
 	}
 

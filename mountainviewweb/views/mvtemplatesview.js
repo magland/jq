@@ -7,6 +7,7 @@ function MVTemplatesView(O,mvcontext) {
 	O.onCalculationFinished=function() {onCalculationFinished();};
 
 	JSQ.connect(O,'sizeChanged',O,update_layout);
+	JSQ.connect(mvcontext,'optionsChanged',O,O.recalculate);
 
 	var m_panel_widget=new MVPanelWidget();
 	m_panel_widget.setParent(O);
@@ -129,8 +130,6 @@ function MVTemplatesViewPanel(O) {
 
 		for (var m=0; m<M; m++) {
 			var col=get_channel_color(m+1);
-			console.log(m);
-			console.log(col);
 			var pen=painter.pen(); pen.color=col; pen.width=1;
 			painter.setPen(pen);
 			{

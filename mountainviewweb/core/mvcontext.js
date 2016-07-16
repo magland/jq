@@ -1,10 +1,11 @@
-function MVContext() {
-	var that=this;
+function MVContext(O) {
+	O=O||this;
+	JSQObject(O);
 
 	this.setMLProxyUrl=function(mlproxy_url) {m_mlproxy_url=mlproxy_url;};
 	this.setTimeseries=function(X) {m_timeseries=X;};
 	this.setFirings=function(X) {m_firings=X;};
-	this.setOption=function(name,val) {m_options[name]=JSQ.clone(val);};
+	this.setOption=function(name,val) {setOption(name,val)};;
 
 	this.mlProxyUrl=function() {return m_mlproxy_url;};
 	this.currentTimeseries=function() {return m_timeseries;};
@@ -19,10 +20,15 @@ function MVContext() {
     this.colors=function() {return JSQ.clone(m_colors);};
     this.channelColors=function() {return JSQ.clone(m_channel_colors);};
     this.clusterColors=function() {return JSQ.clone(m_cluster_colors);};
-    this.setClusterColors=function(list) {m_cluster_colors=JSQ.clone(list);}
+    this.setClusterColors=function(list) {m_cluster_colors=JSQ.clone(list);};
     this.setChannelColors=function(list) {m_channel_colors=JSQ.clone(list);};
     this.setColors=function(map) {m_colors=JSQ.clone(map);};
 
+    function setOption(name,val) {
+    	if (JSQ.compare(val,m_options[name])) return;
+    	m_options[name]=JSQ.clone(val);
+    	O.emit('optionsChanged');
+    }
     function clusterColor(k) {
     	if (k <= 0)
 	        return [0,0,0];

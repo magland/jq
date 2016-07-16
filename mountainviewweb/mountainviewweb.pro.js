@@ -30,12 +30,17 @@ opts.STYLESHEETS.push(
 opts.SOURCEPATH.push('core')
 opts.SCRIPTS.push(
 	'mountainprocessrunner.js','mvabstractview.js','mvcontext.js',
-	'mvcontrolpanel.js','mvmainwindow.js'
+	'mvcontrolpanel.js','mvmainwindow.js','mvabstractcontrolwidget.js'
 );
 
 opts.SOURCEPATH.push('views')
 opts.SCRIPTS.push(
 	'mvtemplatesview.js','mvpanelwidget.js'
+);
+
+opts.SOURCEPATH.push('controlwidgets')
+opts.SCRIPTS.push(
+	'generalcontrolwidget.js'
 );
 
 jsqmake(opts);
