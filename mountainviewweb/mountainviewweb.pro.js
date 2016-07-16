@@ -29,7 +29,8 @@ opts.STYLESHEETS.push(
 
 opts.SOURCEPATH.push('core')
 opts.SCRIPTS.push(
-	'mountainprocessrunner.js','mvabstractview.js','mvcontext.js'
+	'mountainprocessrunner.js','mvabstractview.js','mvcontext.js',
+	'mvcontrolpanel.js','mvmainwindow.js'
 );
 
 opts.SOURCEPATH.push('views')

@@ -13,12 +13,12 @@ function jsqmain(query) {
     mvcontext.setMLProxyUrl(mlproxy_url);
     mvcontext.setOption('clip_size',150);
 
-    var WW=new MVTemplatesView(0,mvcontext);
+    var WW=new MVMainWindow(0,mvcontext);
     WW.showFullBrowser();
-    WW.prepareCalculation();
-    WW.runCalculation({},function(res) {
-        WW.onCalculationFinished();
-    });
+
+    var VV=new MVTemplatesView(0,mvcontext);
+    WW.setView(VV);
+    
 
     //var firings_url='http://localhost:8020/mdaserver/franklab/2016_04_08/sort_dl12_20151208_NNF_r1_tet16_17/output_tet16/firings.mda';
 

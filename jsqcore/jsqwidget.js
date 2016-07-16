@@ -2,24 +2,24 @@ function JSQWidget(O) {
 	O=O||this;
 	JSQObject(O);
 	
-	O.div=function() {return m_div;}
-	O.setDiv=function(div) {setDiv(div);}
-	O.size=function() {return JSQ.clone(m_size);}
-	O.width=function() {return m_size[0];}
-	O.height=function() {return m_size[1];}
-	O.setSize=function(size) {setSize(size);}
-	O.position=function() {return m_position;}
-	O.setPosition=function(pos) {setPosition(pos);}
-	O.showFullBrowser=function() {showFullBrowser();}
+	O.div=function() {return m_div;};
+	O.setDiv=function(div) {setDiv(div);};
+	O.size=function() {return JSQ.clone(m_size);};
+	O.width=function() {return m_size[0];};
+	O.height=function() {return m_size[1];};
+	O.setSize=function(W,H) {setSize(W,H);};
+	O.position=function() {return m_position;};
+	O.setPosition=function(x,y) {setPosition(x,y);};
+	O.showFullBrowser=function() {showFullBrowser();};
 	var JSQObject_setParent=O.setParent;
-	O.setParent=function(parent) {setParent(parent);}
-	O.parentWidget=function() {return parentWidget();}
-	O.setVisible=function(visible) {setVisible(visible);}
+	O.setParent=function(parent) {setParent(parent);};
+	O.parentWidget=function() {return parentWidget();};
+	O.setVisible=function(visible) {setVisible(visible);};
 
-	O.onMousePressEvent=function(handler) {onMousePressEvent(handler);}
-	O.onMouseReleaseEvent=function(handler) {onMouseReleaseEvent(handler);}
-	O.onMouseMoveEvent=function(handler) {onMouseMoveEvent(handler);}
-	O.onWheelEvent=function(handler) {onWheelEvent(handler);}
+	O.onMousePressEvent=function(handler) {onMousePressEvent(handler);};
+	O.onMouseReleaseEvent=function(handler) {onMouseReleaseEvent(handler);};
+	O.onMouseMoveEvent=function(handler) {onMouseMoveEvent(handler);};
+	O.onWheelEvent=function(handler) {onWheelEvent(handler);};
 
 	function setDiv(div_or_str) {
 		m_div=$(div_or_str);
@@ -37,7 +37,9 @@ function JSQWidget(O) {
     	}
 		set_div_geom();
 	}
-	function setSize(size) {
+	function setSize(W,H) {
+		var size=[W,H];
+		if (H===undefined) size=W;
 		if ((size[0]==m_size[0])&&(size[1]==m_size[1])) {
 			return;
 		}
@@ -46,7 +48,9 @@ function JSQWidget(O) {
 		set_div_geom();
 		O.emit('sizeChanged');
 	}
-	function setPosition(pos) {
+	function setPosition(x,y) {
+		var pos=[x,y];
+		if (y===undefined) pos=x;
 		if ((m_position[0]==pos[0])&&(m_position[1]==pos[1])) {
 			return;
 		}
@@ -77,7 +81,7 @@ function JSQWidget(O) {
 	}
 	function setParent(parent) {
 		JSQObject_setParent(parent);
-		if (parent.isWidget()) {
+		if ((parent)&&(parent.isWidget())) {
 			parent.div().append(O.div());
 		}
 	}
