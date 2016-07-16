@@ -2,12 +2,12 @@ function JSQCanvasWidget(O) {
 	O=O||this;
 	JSQWidget(O);
 
-	O.update=function() {private_actions.emit('paint');}
+	O.update=function() {private_signals.emit('paint');};
 
 	//protected methods
 	var P={};
-	var private_actions=new JSQObject();
-	P.onPaint=function(handler) {onPaint(handler);}
+	var private_signals=new JSQObject();
+	P.paintEvent=function(handler) {paintEvent(handler);};
 
 	JSQ.connect(O,'sizeChanged',O,update_canvas_size);
 
@@ -27,33 +27,90 @@ function JSQCanvasWidget(O) {
 		O.update();
 	}
 
-	function onPaint(handler) {
-		JSQ.connect(private_actions,'paint',O,run_handler,'queued');
-		function run_handler(sender,args) {
+	function paintEvent(handler) {
+		JSQ.connect(private_signals,'paint',O,function(sender,args) {
 			m_painter._initialize(O.size()[0],O.size()[1]);
 			handler(m_painter);
 			m_painter._finalize();
-		}
-		O.update();
+		},'queued');
 	}
 
 	return P; //protected methods
 }
 
 function JSQCanvasPainter(canvas) {
+	var that=this;
 	var ctx=null;
+
+	this.pen=function() {return JSQ.clone(m_pen);};
+	this.setPen=function(pen) {m_pen=JSQ.clone(pen);};
+
 	this._initialize=function(W,H) {
 		ctx=canvas[0].getContext('2d');
 		//ctx.fillStyle='black';
 		//ctx.fillRect(0,0,W,H);
-	}
+	};
 	this._finalize=function() {
 		ctx=null;
-	}
+	};
 	this.fillRect=function(x,y,W,H,brush) {
 		if (typeof brush === 'string') brush={color:brush};
-		ctx.fillStyle=brush.color;
+		ctx.fillStyle=to_color(brush.color);
 		ctx.fillRect(x,y,W,H);
+	};
+	this.drawPath=function(painter_path) {
+		ctx.strokeStyle=to_color(m_pen.color);
+		painter_path._draw(ctx);
+	};
+	this.drawLine=function(x1,y1,x2,y2) {
+		var ppath=new JSQPainterPath();
+		ppath.moveTo(x1,y1);
+		ppath.lineTo(x2,y2);
+		that.drawPath(ppath);
+	};
+
+	function to_color(col) {
+		if (typeof col === 'string') return col;
+		return 'rgb('+Math.floor(col[0])+','+Math.floor(col[1])+','+Math.floor(col[2])+')';
 	}
 
+	var m_pen={color:'black'};
+}
+
+function JSQPainterPath() {
+	this.moveTo=function(x,y) {moveTo(x,y);};
+	this.lineTo=function(x,y) {lineTo(x,y);};
+
+	this._draw=function(ctx) {
+		ctx.beginPath();
+		for (var i=0; i<m_actions.length; i++) {
+			apply_action(ctx,m_actions[i]);
+		}
+		ctx.stroke();
+	}
+	var m_actions=[];
+
+	function moveTo(x,y) {
+		if (y===undefined) {moveTo(x[0],x[1]); return;}
+		m_actions.push({
+			name:'moveTo',
+			x:x,y:y
+		});
+	}
+	function lineTo(x,y) {
+		if (y===undefined) {lineTo(x[0],x[1]); return;}
+		m_actions.push({
+			name:'lineTo',
+			x:x,y:y
+		});
+	}
+
+	function apply_action(ctx,a) {
+		if (a.name=='moveTo') {
+			ctx.moveTo(a.x,a.y);
+		}
+		else if (a.name=='lineTo') {
+			ctx.lineTo(a.x,a.y);
+		}
+	}
 }

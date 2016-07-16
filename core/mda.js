@@ -7,13 +7,13 @@ function Mda() {
 		m_dims[0]=n1; m_dims[1]=n2; m_dims[2]=n3; m_dims[3]=n4; m_dims[4]=n5;
 		m_data=new Float32Array(m_total_size);
 		for (var i=0; i<m_total_size; i++) m_data[i]=0;
-	}
-	this.N1=function() {return m_dims[0];}
-	this.N2=function() {return m_dims[1];}
-	this.N3=function() {return m_dims[2];}
-	this.N4=function() {return m_dims[3];}
-	this.N5=function() {return m_dims[4];}
-	this.totalSize=function() {return m_total_size;}
+	};
+	this.N1=function() {return m_dims[0];};
+	this.N2=function() {return m_dims[1];};
+	this.N3=function() {return m_dims[2];};
+	this.N4=function() {return m_dims[3];};
+	this.N5=function() {return m_dims[4];};
+	this.totalSize=function() {return m_total_size;};
 	this.value=function(i1,i2,i3,i4,i5) {
 		if (i2===undefined) {
 			return m_data[i1];
@@ -30,7 +30,7 @@ function Mda() {
 		else {
 			return this.value(i1 +m_dims[0]*i2 +m_dims[0]*m_dims[1]*i3 +m_dims[0]*m_dims[1]*m_dims[2]*i4 +m_dims[0]*m_dims[1]*m_dims[2]*m_dims[3]*i5);
 		}
-	}
+	};
 	this.setValue=function(val,i1,i2,i3,i4,i5) {
 		if (i2===undefined) {
 			m_data[i1]=val;
@@ -47,24 +47,24 @@ function Mda() {
 		else {
 			this.setValue(val,i1 +m_dims[0]*i2 +m_dims[0]*m_dims[1]*i3 +m_dims[0]*m_dims[1]*m_dims[2]*i4 +m_dims[0]*m_dims[1]*m_dims[2]*m_dims[3]*i5);
 		}
-	}
-	this.data=function() {return m_data;}
+	};
+	this.data=function() {return m_data;};
 	this.dataCopy=function() {
 		var ret=new Float32Array(m_total_size);
 		for (var i=0; i<m_total_size.length; i++) {
 			ret[i]=m_data[i];
 		}
 		return ret;
-	}
+	};
 	this.setData=function(data) {
 		m_data=data;
-	}
+	};
 	this.clone=function() {
 		var ret=new Mda();
 		ret.allocate(this.N1(),this.N2(),this.N3(),this.N4(),this.N5());
 		ret.setData(this.dataCopy());
 		return ret;
-	}
+	};
 	this.reshape=function(n1,n2,n3,n4,n5) {
 		n2=n2||1; n3=n3||1; n4=n4||1; n5=n5||1;
 		var tot=n1*n2*n3*n4*n5;
@@ -73,20 +73,19 @@ function Mda() {
 			return;
 		}
 		m_dims[0]=n1; m_dims[1]=n2; m_dims[2]=n3; m_dims[3]=n4; m_dims[4]=n5;		
-	}
+	};
 	this.getChunk=function(i,size) {
 		var ret=new Mda();
 		ret.allocate(size,1);
-		console.log(m_data);
 		ret.setData(m_data.subarray(i,i+size));
 		return ret;
-	}
+	};
 	this.subArray=function(arg1,arg2,arg3,arg4,arg5,arg6) {
 		if (arg3===undefined) {
 			return that.getChunk(arg1,arg2);
 		}
-		else if (arg5==undefined) {
-			if ((arg3!=that.N1())||(arg1!=0)) {
+		else if (arg5===undefined) {
+			if ((arg3!=that.N1())||(arg1!==0)) {
 				console.error('This case not supported yet: subArray.');
 				return null;
 			}
@@ -97,11 +96,11 @@ function Mda() {
 			return ret;
 		}
 		else {
-			if ((arg4!=that.N1())||(arg1!=0)) {
+			if ((arg4!=that.N1())||(arg1!==0)) {
 				console.error('This case not supported yet: subArray.');
 				return null;
 			}
-			if ((arg5!=that.N2())||(arg2!=0)) {
+			if ((arg5!=that.N2())||(arg2!==0)) {
 				console.error('This case not supported yet: subArray.');
 				return null;
 			}
@@ -111,7 +110,7 @@ function Mda() {
 			ret.reshape(arg4,arg5,arg6);
 			return ret;
 		}
-	}
+	};
 	this.load=function(url,callback) {
 		console.log('loading: '+url);
 		$.ajax({
@@ -155,7 +154,25 @@ function Mda() {
 				}
 			}
 		});
-	}
+	};
+	this.minimum=function() {
+		console.log(m_data);
+		console.log(m_data.length);
+		if (m_data.length===0) return 0;
+		var ret=m_data[0];
+		for (var i=0; i<m_data.length; i++) {
+			if (m_data[i]<ret) ret=m_data[i];
+		}
+		return ret;
+	};
+	this.maximum=function() {
+		if (m_data.length===0) return 0;
+		var ret=m_data[0];
+		for (var i=0; i<m_data.length; i++) {
+			if (m_data[i]>ret) ret=m_data[i];
+		}
+		return ret;
+	};
 	function get_dtype_string(num) {
 		if (num==-2) return 'byte';
 		if (num==-3) return 'float32';

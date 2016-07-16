@@ -2,12 +2,14 @@ function MVTemplatesView(O,mvcontext) {
 	O=O||this;
 	MVAbstractView(O,mvcontext);
 
-	O.setTemplates=function(templates) {setTemplates(templates);}
+	O.setTemplates=function(templates) {setTemplates(templates);};
 
 	JSQ.connect(O,'sizeChanged',O,update_layout);
 
-	var m_panel_widget=new JSQPanelWidget();
+	var m_panel_widget=new MVPanelWidget();
 	m_panel_widget.setParent(O);
+	var m_template_panels=[];
+	var m_vscale_factor=2;
 
 	var m_templates=new Mda();
 
@@ -18,13 +20,30 @@ function MVTemplatesView(O,mvcontext) {
 	}
 
 	function setTemplates(templates) {
+		m_templates=templates;
 		var M=templates.N1();
 		var T=templates.N2();
 		m_panel_widget.clearPanels();
+		m_template_panels=[];
 		for (var k=0; k<templates.N3(); k++) {
 			var Y=new MVTemplatesViewPanel();
 			Y.setTemplate(templates.subArray(0,0,k,M,T,1));
 			m_panel_widget.addPanel(0,k,Y);
+			m_template_panels.push(Y);
+		}
+		update_scale_factors();
+	}
+	function update_scale_factors() {
+		var min0=m_templates.minimum();
+		var max0=m_templates.maximum();
+		console.log(min0);
+		console.log(max0);
+		var maxabs=Math.max(Math.abs(min0),Math.abs(max0));
+		console.log('maxabs='+maxabs);
+		if (!maxabs) maxabs=1;
+		var factor=1/maxabs*m_vscale_factor;
+		for (var i=0; i<m_template_panels.length; i++) {
+			m_template_panels[i].setVerticalScaleFactor(factor);
 		}
 	}
 
@@ -35,18 +54,67 @@ function MVTemplatesViewPanel(O) {
 	O=O||this;
 	var CW=JSQCanvasWidget(O);
 
-	this.setTemplate=function(template) {m_template=template; render();}
+	this.setTemplate=function(template) {m_template=template; O.update();};
+	this.setVerticalScaleFactor=function(factor) {m_vert_scale_factor=factor; O.update();};
 
-	CW.onPaint(function(painter) {
-		console.log('testing ....');
-		painter.fillRect(20,0,20,10,'green');
-	});
+	CW.paintEvent(paintEvent);
 
-	var m_template=new Mda();
-
-	function render() {
+	function paintEvent(painter) {
 		var M=m_template.N1();
 		var T=m_template.N2();
-		var val=m_template.value(0);
+		var W0=O.width();
+		var H0=O.height();
+		var Tmid = Math.floor((T + 1) / 2) - 1;
+
+		{
+			//the midline
+			var view_background=[245,245,245];
+			var midline_color=lighten(view_background,0.9);
+			var pt0=coord2pix(0,Tmid,0);
+			var pen=painter.pen(); pen.color=midline_color; pen.width=1;
+			painter.setPen(pen);
+			painter.drawLine(pt0[0],0,pt0[0],H0);
+		}
+
+		for (var m=0; m<M; m++) {
+			var col='red'; //replace with channel color
+			var pen=painter.pen(); pen.color=col; pen.width=1;
+			painter.setPen(pen);
+			{
+				//the template
+				var ppath=new JSQPainterPath();
+				for (var t=0; t<T; t++) {
+					var val=m_template.value(m,t);
+					var pt=coord2pix(m,t,val);
+					if (t==0) ppath.moveTo(pt);
+					else ppath.lineTo(pt);
+				}
+				painter.drawPath(ppath);
+			}
+		}
+    }
+
+    function coord2pix(m,t,val) {
+    	var M=m_template.N1();
+    	var T=m_template.N2();
+    	var W0=O.size()[0];
+    	var H0=O.size()[1];
+    	var pctx=0,pcty=0;
+    	if (T) pctx=(t+0.5)/T;
+    	if (M) pcty=(m+0.5+val*m_vert_scale_factor)/M;
+    	var margx=4,margy=5;
+    	var x0=margx+pctx*(W0-margx*2);
+    	var y0=margy+(1-pcty)*(H0-margy*2);
+    	return [x0,y0];
+    }
+
+	var m_template=new Mda();
+	var m_vert_scale_factor=1;
+
+
+	function lighten(col,val) {
+		var ret=[col[0]*val,col[1]*val,col[2]*val];
+		ret=[Math.min(255,ret[0]),Math.min(255,ret[1]),Math.min(255,ret[2])];
+		return ret;
 	}
 }

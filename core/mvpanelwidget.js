@@ -1,4 +1,4 @@
-function JSQPanelWidget(O) {
+function MVPanelWidget(O) {
 	if (!O) O=this;
 	JSQWidget(O);
 
@@ -54,7 +54,7 @@ function JSQPanelWidget(O) {
 		var panel={row:row,col:col,W:W,pixel_geom:[0,0,0,0]};
 		m_panels.push(panel);
 		O.div().append(W.div());
-		W.div().addClass("jsqpanelwidget_panel");
+		W.div().addClass("mvpanelwidget_panel");
 		/// TODO, use a queued signal so we don't update layout after every add or resize
 		update_layout();
 	}
@@ -103,10 +103,10 @@ function JSQPanelWidget(O) {
 		m_current_panel_index=ind;
 		for (var ii=0; ii<m_panels.length; ii++) {
 			if (ii==ind) {
-				m_panels[ii].W.div().addClass("jsqpanelwidget_current_panel");
+				m_panels[ii].W.div().addClass("mvpanelwidget_current_panel");
 			}
 			else {
-				m_panels[ii].W.div().removeClass("jsqpanelwidget_current_panel");	
+				m_panels[ii].W.div().removeClass("mvpanelwidget_current_panel");	
 			}
 		}
 

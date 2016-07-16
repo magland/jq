@@ -4,7 +4,9 @@ function JSQWidget(O) {
 	
 	O.div=function() {return m_div;}
 	O.setDiv=function(div) {setDiv(div);}
-	O.size=function() {return [m_size[0],m_size[1]];}
+	O.size=function() {return JSQ.clone(m_size);}
+	O.width=function() {return m_size[0];}
+	O.height=function() {return m_size[1];}
 	O.setSize=function(size) {setSize(size);}
 	O.position=function() {return m_position;}
 	O.setPosition=function(pos) {setPosition(pos);}
