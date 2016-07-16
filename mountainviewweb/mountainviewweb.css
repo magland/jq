@@ -1,6 +1,15 @@
-#test_panel {
-	background-color: lightblue;
-	color:red;
+
+.MVTemplatesViewPanel {
+	background:rgb(245,245,245);
+}
+.MVTemplatesViewPanel.hovered {
+	background:rgb(230,235,230);
+}
+.MVTemplatesViewPanel.selected {
+	background:rgb(220,240,250);
+}
+.MVTemplatesViewPanel.current {
+	background:rgb(210,230,250);
 }
 
 body {

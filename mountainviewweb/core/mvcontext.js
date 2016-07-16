@@ -24,6 +24,67 @@ function MVContext(O) {
     this.setChannelColors=function(list) {m_channel_colors=JSQ.clone(list);};
     this.setColors=function(map) {m_colors=JSQ.clone(map);};
 
+    /////////////////////////////////////////////////
+    // CURRENT and SELECTED
+    /////////////////////////////////////////////////
+    this.currentEvent=function() {return JSQ.clone(m_current_event);};
+    this.currentCluster=function() {return m_current_cluster;};
+    this.selectedClusters=function() {return JSQ.clone(m_selected_clusters);};
+    this.currentTimepoint=function() {return m_current_timepoint;};
+    this.currentTimeRange=function() {return JSQ.clone(m_current_time_range);};
+    this.setCurrentEvent=function(E) {setCurrentEvent(JSQ.clone(E));};
+    this.setCurrentCluster=function(k) {setCurrentCluster(k);};
+    this.setSelectedClusters=function(ks) {setSelectedClusters(JSQ.clone(ks));};
+    this.setCurrentTimepoint=function(t) {setCurrentTimepoint(t);};
+    this.setCurrentTimeRange=function(range) {setCurrentTimeRange(JSQ.clone(range));};
+    this.clickCluster=function(k) {clickCluster(k);};
+
+    function setCurrentEvent(E) {
+    	if (JSQ.compare(E,m_current_event)) return;
+    	m_current_event=E; //already cloned
+    	O.emit('currentEventChanged');
+    }
+    function setCurrentCluster(k) {
+    	if (JSQ.compare(k,m_current_cluster)) return;
+    	m_current_cluster=k; //already cloned
+    	O.emit('currentClusterChanged');
+    }
+    function setSelectedClusters(ks) {
+    	if (JSQ.compare(ks,m_selected_clusters)) return;
+    	m_selected_clusters=ks; //already cloned
+    	O.emit('selectedClustersChanged');
+    }
+    function setCurrentTimepoint(t) {
+    	if (JSQ.compare(t,m_current_timepoint)) return;
+    	m_current_timepoint=t; //already cloned
+    	O.emit('currentTimepointChanged');
+    }
+    function setCurrentTimeRange(range) {
+    	if (JSQ.compare(range,m_current_time_range)) return;
+    	m_current_time_range=range; //already cloned
+    	O.emit('currentTimeRange');
+    }
+    function clickCluster(k,modifiers) {
+    	if (k<0) return;
+    	var tmp=JSQ.clone(m_selected_clusters);
+    	if (modifiers=='control') {
+    		if (k in m_selected_clusters) {
+    			delete tmp[k];
+    			O.setSelectedClusters(tmp);
+    		}
+    		else {
+    			tmp[k]=1;
+    			O.setSelectedClusters(tmp);
+    		}
+    	}
+    	else {
+    		//O.setSelectedClusterPairs({});
+    		O.setSelectedClusters({});
+    		O.setCurrentCluster(k);
+    	}
+    }
+
+
     function setOption(name,val) {
     	if (JSQ.compare(val,m_options[name])) return;
     	m_options[name]=JSQ.clone(val);
@@ -51,6 +112,12 @@ function MVContext(O) {
     var m_colors={};
     var m_channel_colors=mv_default_channel_colors();
     var m_cluster_colors=[];
+
+    var m_current_timepoint=-1;
+    var m_current_cluster=0;
+    var m_current_event=[-1,-1];
+    var m_current_time_range=[-1,-1];
+    var m_selected_clusters={};
 
 	var m_mlproxy_url='';
 	var m_timeseries=new RemoteReadMda();

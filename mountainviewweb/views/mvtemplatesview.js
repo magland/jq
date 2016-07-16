@@ -1,6 +1,7 @@
 function MVTemplatesView(O,mvcontext) {
 	O=O||this;
 	MVAbstractView(O,mvcontext);
+	O.div().addClass('MVTemplatesView');
 
 	O.prepareCalculation=function() {prepareCalculation();};
 	O.runCalculation=function(opts,callback) {runCalculation(opts,callback);};
@@ -13,6 +14,8 @@ function MVTemplatesView(O,mvcontext) {
 	m_panel_widget.setParent(O);
 	var m_template_panels=[];
 	var m_vscale_factor=2;
+
+	m_panel_widget.onPanelClicked(panelClicked);
 
 	var m_templates=new Mda();
 
@@ -30,12 +33,20 @@ function MVTemplatesView(O,mvcontext) {
 		m_template_panels=[];
 		for (var k=0; k<templates.N3(); k++) {
 			var Y=new MVTemplatesViewPanel();
+			Y.setProperty('k',k+1);
 			Y.setChannelColors(mvcontext.channelColors());
 			Y.setTemplate(templates.subArray(0,0,k,M,T,1));
 			m_panel_widget.addPanel(0,k,Y);
 			m_template_panels.push(Y);
 		}
 		update_scale_factors();
+	}
+	function panelClicked(ind) {
+		if (ind in m_template_panels) {
+			console.log('panel_clicked: '+ind);
+			O.mvContext.clickCluster(m_template_panels[ind].property('k'));
+		}
+
 	}
 	function update_scale_factors() {
 		var min0=m_templates.minimum();
@@ -101,6 +112,7 @@ function MVTemplatesView(O,mvcontext) {
 function MVTemplatesViewPanel(O) {
 	O=O||this;
 	var CW=JSQCanvasWidget(O);
+	O.div().addClass('MVTemplatesViewPanel');
 
 	this.setChannelColors=function(list) {m_channel_colors=JSQ.clone(list);};
 	this.setTemplate=function(template) {m_template=template; O.update();};
@@ -109,9 +121,9 @@ function MVTemplatesViewPanel(O) {
 		O.update();
 	};
 
-	CW.paintEvent(paintEvent);
+	CW.onPaint(paint);
 
-	function paintEvent(painter) {
+	function paint(painter) {
 		var M=m_template.N1();
 		var T=m_template.N2();
 		var W0=O.width();

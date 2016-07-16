@@ -2,17 +2,19 @@ function MVPanelWidget(O) {
 	if (!O) O=this;
 	JSQWidget(O);
 
-	O.clearPanels=function() {clearPanels();}
-	O.addPanel=function(row,col,W) {addPanel(row,col,W);}
-	O.rowCount=function() {return rowCount();}
-	O.columnCount=function() {return columnCount();}
-	O.setSpacing=function(row_spacing,col_spacing) {m_row_spacing=row_spacing; m_col_spacing=m_col_spacing; update_layout();}
-	O.setMargins=function(row_margin,col_margin) {m_row_margin=row_margin; m_col_margin=col_margin;}
+	O.clearPanels=function() {clearPanels();};
+	O.addPanel=function(row,col,W) {addPanel(row,col,W);};
+	O.rowCount=function() {return rowCount();};
+	O.columnCount=function() {return columnCount();};
+	O.setSpacing=function(row_spacing,col_spacing) {m_row_spacing=row_spacing; m_col_spacing=m_col_spacing; update_layout();};
+	O.setMargins=function(row_margin,col_margin) {m_row_margin=row_margin; m_col_margin=col_margin;};
 
-	O.onMousePressEvent(mousePressEvent);
-	O.onMouseReleaseEvent(mouseReleaseEvent);
-	O.onMouseMoveEvent(mouseMoveEvent);
-	O.onWheelEvent(wheelEvent);
+	O.onPanelClicked=function(handler) {JSQ.connect(O,'panel_clicked',O,function(sender,args) {handler(args);});};
+
+	O.onMousePress(mousePress);
+	O.onMouseRelease(mouseRelease);
+	O.onMouseMove(mouseMove);
+	O.onWheel(wheel);
 
 	var m_panels=[];
 	var m_row_margin=3;
@@ -126,20 +128,21 @@ function MVPanelWidget(O) {
 	var press_anchor=[-1,-1];
 	var press_anchor_viewport_geom=[0,0,1,1];
 	var is_dragging=false;
-	function mousePressEvent(evt) {
+	function mousePress(evt) {
 		press_anchor=JSQ.clone(evt.pos);
 		press_anchor_viewport_geom=JSQ.clone(m_viewport_geom);
 		is_dragging=false;
 	}
-	function mouseReleaseEvent(evt) {
+	function mouseRelease(evt) {
 		press_anchor=[-1,-1];
 		if (!is_dragging) {
 			var ind=panel_index_at(evt.pos);
 			set_current_panel_index(ind);
+			O.emit('panel_clicked',ind);
 		}
 		is_dragging=false;
 	}
-	function mouseMoveEvent(evt) {
+	function mouseMove(evt) {
 		if (press_anchor[0]>=0) {
 			var dx=evt.pos[0]-press_anchor[0];
 			var dy=evt.pos[1]-press_anchor[1];
@@ -158,7 +161,7 @@ function MVPanelWidget(O) {
 			}
 		}
 	}
-	function wheelEvent(evt) {
+	function wheel(evt) {
 		if (evt.delta>0) {
 			zoom(1/1.2);
 		}

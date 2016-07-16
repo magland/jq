@@ -3,7 +3,6 @@ function JSQWidget(O) {
 	JSQObject(O);
 	
 	O.div=function() {return m_div;};
-	O.setDiv=function(div) {setDiv(div);};
 	O.size=function() {return JSQ.clone(m_size);};
 	O.width=function() {return m_size[0];};
 	O.height=function() {return m_size[1];};
@@ -16,21 +15,24 @@ function JSQWidget(O) {
 	O.parentWidget=function() {return parentWidget();};
 	O.setVisible=function(visible) {setVisible(visible);};
 
-	O.onMousePressEvent=function(handler) {onMousePressEvent(handler);};
-	O.onMouseReleaseEvent=function(handler) {onMouseReleaseEvent(handler);};
-	O.onMouseMoveEvent=function(handler) {onMouseMoveEvent(handler);};
-	O.onWheelEvent=function(handler) {onWheelEvent(handler);};
+	O.onMousePress=function(handler) {onMousePress(handler);};
+	O.onMouseRelease=function(handler) {onMouseRelease(handler);};
+	O.onMouseMove=function(handler) {onMouseMove(handler);};
+	O.onMouseEnter=function(handler) {onMouseEnter(handler);};
+	O.onMouseLeave=function(handler) {onMouseLeave(handler);};
+	O.onWheel=function(handler) {onWheel(handler);};
 
 	JSQ.connect(O,'destroyed',O,on_destroyed);
 	function on_destroyed() {
 		m_div.remove();
 	}
 
-	function setDiv(div_or_str) {
-		m_div=$(div_or_str);
+	function connect_div() {
 		m_div.mousedown(function(e) {mouse_actions.emit('press',jq_mouse_event($(this),e));});
 		m_div.mouseup(function(e) {mouse_actions.emit('release',jq_mouse_event($(this),e));});
 		m_div.mousemove(function(e) {mouse_actions.emit('move',jq_mouse_event($(this),e));});
+		m_div.mouseenter(function(e) {mouse_actions.emit('enter',jq_mouse_event($(this),e));});
+		m_div.mouseleave(function(e) {mouse_actions.emit('leave',jq_mouse_event($(this),e));});
 		m_div.on('dragstart',function() {return false;});
 		m_div.bind('mousewheel', function(e){
 			console.log('wheel 1');
@@ -95,24 +97,45 @@ function JSQWidget(O) {
 		if (!O.parent().isWidget()) return null;
 		return O.parent();
 	}
+
+	function mouseMove() {
+		O.div().addClass('hovered');
+	}
+	function mouseEnter() {
+		O.div().addClass('hovered');
+	}
+	function mouseLeave() {
+		O.div().removeClass('hovered');
+	}
+
 	var mouse_actions=new JSQObject;
 	var wheel_actions=new JSQObject;
-	function onMousePressEvent(handler) {
+	function onMousePress(handler) {
 		JSQ.connect(mouse_actions,'press',O,function(sender,args) {
 			handler(args);
 		});
 	}
-	function onMouseReleaseEvent(handler) {
+	function onMouseRelease(handler) {
 		JSQ.connect(mouse_actions,'release',O,function(sender,args) {
 			handler(args);
 		});
 	}
-	function onMouseMoveEvent(handler) {
+	function onMouseMove(handler) {
 		JSQ.connect(mouse_actions,'move',O,function(sender,args) {
 			handler(args);
 		});
 	}
-	function onWheelEvent(handler) {
+	function onMouseEnter(handler) {
+		JSQ.connect(mouse_actions,'enter',O,function(sender,args) {
+			handler(args);
+		});
+	}
+	function onMouseLeave(handler) {
+		JSQ.connect(mouse_actions,'leave',O,function(sender,args) {
+			handler(args);
+		});
+	}
+	function onWheel(handler) {
 		JSQ.connect(wheel_actions,'wheel',O,function(sender,args) {
 			handler(args);
 		});
@@ -128,7 +151,7 @@ function JSQWidget(O) {
 	}
 	function jq_wheel_event(elmt,e) {
 		return {
-			delta:e.originalEvent.wheelDelta
+			delta:e.original.wheelDelta
 		};
 	}
 	function setVisible(visible) {
@@ -137,11 +160,11 @@ function JSQWidget(O) {
 	}
 
 	O._set_is_widget(true);
-	var m_div=null;
 	var m_position=[0,0];
 	var m_size=[0,0];
 
-	O.setDiv($('<div></div>'));
+	var m_div=$('<div></div>');
+	connect_div(m_div);
 
 	function set_div_geom() {
 		m_div.css({
@@ -152,6 +175,10 @@ function JSQWidget(O) {
 			height:m_size[1]
 		})
 	}
+
+	O.onMouseMove(mouseMove);
+	O.onMouseEnter(mouseEnter);
+	O.onMouseLeave(mouseLeave);
 }
 
 function BrowserWindow(O) {

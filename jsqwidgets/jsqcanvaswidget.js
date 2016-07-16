@@ -7,7 +7,7 @@ function JSQCanvasWidget(O) {
 	//protected methods
 	var P={};
 	var private_signals=new JSQObject();
-	P.paintEvent=function(handler) {paintEvent(handler);};
+	P.onPaint=function(handler) {paint(handler);};
 
 	JSQ.connect(O,'sizeChanged',O,update_canvas_size);
 
@@ -27,7 +27,7 @@ function JSQCanvasWidget(O) {
 		O.update();
 	}
 
-	function paintEvent(handler) {
+	function paint(handler) {
 		JSQ.connect(private_signals,'paint',O,function(sender,args) {
 			m_painter._initialize(O.size()[0],O.size()[1]);
 			handler(m_painter);
