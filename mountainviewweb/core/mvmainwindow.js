@@ -16,8 +16,10 @@ function MVMainWindow(O,mvcontext) {
 		m_view.destroy();
 		m_view=V;
 		V.setParent(O);
-		V.recalculate();
-	    update_layout();
+		update_layout();
+		setTimeout(function() {
+			V.recalculate();
+		},10);
 	}
 
 	function update_layout() {

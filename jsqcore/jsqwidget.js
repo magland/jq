@@ -8,6 +8,8 @@ function JSQWidget(O) {
 	O.height=function() {return m_size[1];};
 	O.setSize=function(W,H) {setSize(W,H);};
 	O.position=function() {return m_position;};
+	O.left=function() {return m_position[0];};
+	O.top=function() {return m_position[1];};
 	O.setPosition=function(x,y) {setPosition(x,y);};
 	O.showFullBrowser=function() {showFullBrowser();};
 	var JSQObject_setParent=O.setParent;
