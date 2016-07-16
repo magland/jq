@@ -40,18 +40,16 @@ function JSQCanvasWidget(O) {
 
 function JSQCanvasPainter(canvas) {
 	var that=this;
-	var ctx=null;
+	var ctx=canvas[0].getContext('2d');
 
 	this.pen=function() {return JSQ.clone(m_pen);};
 	this.setPen=function(pen) {m_pen=JSQ.clone(pen);};
 
 	this._initialize=function(W,H) {
-		ctx=canvas[0].getContext('2d');
 		//ctx.fillStyle='black';
 		//ctx.fillRect(0,0,W,H);
 	};
 	this._finalize=function() {
-		ctx=null;
 	};
 	this.fillRect=function(x,y,W,H,brush) {
 		if (typeof brush === 'string') brush={color:brush};

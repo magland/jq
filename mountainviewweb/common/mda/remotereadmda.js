@@ -1,8 +1,8 @@
-// Do not use this class directly -- it is used by DiskReadMda
-function RemoteReadMda() {
+function RemoteReadMda(path_in) {
 	var that=this;
 
 	this.setPath=function(path,callback) {m_path=path; m_initialized=false; initialize(callback);}
+	this.path=function() {return m_path;}
 	this.initialize=function(callback) {initialize(callback);}
 	this.isInitialized=function() {return m_initialized;}
 	this.N1=function() {return get_dim(1);}
@@ -189,6 +189,10 @@ function RemoteReadMda() {
 	}
 	var m_remote_datatype='float64';
 	var m_download_failed=false;
+
+	if (path_in) {
+		that.setPath(path_in);
+	}
 }
 
 var s_chunk_cache={};

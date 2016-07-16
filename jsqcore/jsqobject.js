@@ -59,8 +59,8 @@ function JSQObject(O) {
 		if (!id) return;
 		m_child_ids[id]=1;
 	}
-	O._connect=function(signal_name,receiver,callback) {
-		JSQ.connect(O,signal_name,receiver,callback);
+	O._connect=function(signal_name,receiver,callback,connection_type) {
+		JSQ.connect(O,signal_name,receiver,callback,connection_type);
 	}
 	O._set_is_widget=function() {m_is_widget=true;}
 

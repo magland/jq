@@ -1,12 +1,25 @@
 function jsqmain(query) {
 	var context={};
 
-    var WW=new MVTemplatesView(0,context);
-    WW.showFullBrowser();
+
 
     var timeseries_url='http://datalaboratory.org:8020/mdaserver/franklab/results/20160426_r1_nt16/ms_20160605/pre2.mda';
     var firings_url='http://datalaboratory.org:8020/mdaserver/franklab/results/20160426_r1_nt16/ms_20160605/firings_new.mda';
     var mlproxy_url='http://datalaboratory.org:8020';
+
+    var mvcontext=new MVContext();
+    mvcontext.setTimeseries(new RemoteReadMda(timeseries_url));
+    mvcontext.setFirings(new RemoteReadMda(firings_url));
+    mvcontext.setMLProxyUrl(mlproxy_url);
+    mvcontext.setOption('clip_size',150);
+
+    var WW=new MVTemplatesView(0,mvcontext);
+    WW.showFullBrowser();
+    WW.prepareCalculation();
+    WW.runCalculation({},function(res) {
+        WW.onCalculationFinished();
+    });
+
     //var firings_url='http://localhost:8020/mdaserver/franklab/2016_04_08/sort_dl12_20151208_NNF_r1_tet16_17/output_tet16/firings.mda';
 
     /*
@@ -25,6 +38,7 @@ function jsqmain(query) {
     */
 
 
+    /*
     {
         var X=new MountainProcessRunner();
         X.setProcessorName("mv_compute_templates");
@@ -56,8 +70,9 @@ function jsqmain(query) {
             //templates_out.setRemoteDataType("float32_q8");
             //stdevs_out.setRemoteDataType("float32_q8");
         });
-        
     }
+    */
+
 
 
 

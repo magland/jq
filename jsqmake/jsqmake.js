@@ -1,7 +1,7 @@
 var fs=require('fs');
 
 function jsqmake(opts) {
-	var html_text=read_text_file('jsqmake.template.html');
+	var html_text=read_text_file(__dirname+'/jsqmake.template.html');
 	if (!html_text) {
 		console.error('Unable to read jsqmake.template.html');
 		return false;

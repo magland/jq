@@ -14,6 +14,7 @@ function JSQWidget(O) {
 	var JSQObject_setParent=O.setParent;
 	O.setParent=function(parent) {setParent(parent);}
 	O.parentWidget=function() {return parentWidget();}
+	O.setVisible=function(visible) {setVisible(visible);}
 
 	O.onMousePressEvent=function(handler) {onMousePressEvent(handler);}
 	O.onMouseReleaseEvent=function(handler) {onMouseReleaseEvent(handler);}
@@ -120,6 +121,10 @@ function JSQWidget(O) {
 		return {
 			delta:e.originalEvent.wheelDelta
 		};
+	}
+	function setVisible(visible) {
+		if (visible) m_div.css({visibility:'visible'});
+		else m_div.css({visibility:'hidden'});
 	}
 
 	O._set_is_widget(true);

@@ -15,11 +15,11 @@ function MVPanelWidget(O) {
 	O.onWheelEvent(wheelEvent);
 
 	var m_panels=[];
-	var m_row_margin=10;
-	var m_row_spacing=10;
-	var m_col_margin=10;
-	var m_col_spacing=10;
-	var m_viewport_geom=[-0.1,0,0.9,1];
+	var m_row_margin=3;
+	var m_row_spacing=3;
+	var m_col_margin=3;
+	var m_col_spacing=3;
+	var m_viewport_geom=[0,0,1,1];
 	var m_current_panel_index=-1;
 
 	JSQ.connect(O,'sizeChanged',O,update_layout);

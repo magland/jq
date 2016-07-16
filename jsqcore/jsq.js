@@ -1,7 +1,7 @@
 var JSQ=new JSQCore();
 
 function JSQCore() {
-	this.connect=function(sender,signal,receiver,callback) {connect(sender,signal,receiver,callback);}
+	this.connect=function(sender,signal,receiver,callback,connection_type) {connect(sender,signal,receiver,callback,connection_type);}
 	this.emit=function(sender,signal_name,args) {emit(sender,signal_name,args);}
 	this.clone=function(obj_or_array) {return clone(obj_or_array);}
 	this.computeSha1SumOfString=function(str) {return computeSha1SumOfString(str);}
@@ -10,8 +10,8 @@ function JSQCore() {
 	this._addObject=function(id,obj) {addObject(id,obj);}
 	this._removeObject=function(id) {removeObject(id);}
 
-	function connect(sender,signal_name,receiver,callback) {
-		m_connection_manager.connect(sender,signal_name,receiver,callback);
+	function connect(sender,signal_name,receiver,callback,connection_type) {
+		m_connection_manager.connect(sender,signal_name,receiver,callback,connection_type);
 	}
 	function emit(sender,signal_name,args) {
 		m_connection_manager.emit(sender,signal_name,args);
@@ -42,7 +42,7 @@ function JSQCore() {
 }
 
 function JSQConnectionManager() {
-	this.connect=function(sender,signal_name,receiver,callback) {connect(sender,signal_name,receiver,callback);}
+	this.connect=function(sender,signal_name,receiver,callback,connection_type) {connect(sender,signal_name,receiver,callback,connection_type);}
 	this.emit=function(sender,signal_name,args) {emit(sender,signal_name,args);}
 
 	function signal(sender_id,signal_name) {
