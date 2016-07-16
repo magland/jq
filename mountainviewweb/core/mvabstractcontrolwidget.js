@@ -19,6 +19,8 @@ function MVAbstractControlWidget(O,mvcontext,main_window) {
 	P.createDoubleControl=function(name) {return createIntControl(name);};
 	P.createButtonControl=function(name,label,callback) {return createButtonControl(name,label,callback);};
 
+	P.updateControlsOn=function(sender,signal) {JSQ.connect(sender,signal,O,O.updateControls);};
+
 	function controlValue(name) {
 		if  (name in m_int_controls) return Number(m_int_controls[name].val());
 		if  (name in m_double_controls) return Number(m_double_controls[name].val());

@@ -23,11 +23,18 @@ function MVMainWindow(O,mvcontext) {
 	}
 
 	function update_layout() {
-		m_control_panel.setSize(250,O.height());
+		var W0=O.width();
+		var H0=O.height();
+		var W1=W0/3;
+		if (W1<250) W1=250;
+		if (W1>800) W1=800;
+		var W2=W0-W1;
+
+		m_control_panel.setSize(W1,O.height());
 		m_control_panel.setPosition(0,0);
 
-		m_view.setSize(O.width()-250,O.height());
-		m_view.setPosition(250,0);
+		m_view.setSize(W2,O.height());
+		m_view.setPosition(W1,0);
 	}
 
 }

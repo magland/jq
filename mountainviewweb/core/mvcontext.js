@@ -122,7 +122,7 @@ function MVContext(O) {
 	var m_mlproxy_url='';
 	var m_timeseries=new RemoteReadMda();
 	var m_firings=new RemoteReadMda();
-	var m_options={clip_size:100};
+	var m_options={clip_size:100,cc_max_dt:100};
 }
 
 function mv_default_channel_colors() {

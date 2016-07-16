@@ -9,6 +9,7 @@ function MVControlPanel(O) {
 	function addControlWidget(W) {
 		m_control_widgets.push(W);
 		W.setParent(O);
+		W.updateControls();
 		update_layout();
 	}
 	function update_layout() {
