@@ -57,7 +57,6 @@ function MVTemplatesView(O,mvcontext) {
 	}
 	function panelClicked(ind,modifiers) {
 		if (ind in m_template_panels) {
-			console.log('panel_clicked: '+ind);
 			O.mvContext().clickCluster(m_template_panels[ind].property('k'),modifiers);
 		}
 
@@ -125,7 +124,7 @@ function MVTemplatesView(O,mvcontext) {
 
 function MVTemplatesViewPanel(O) {
 	O=O||this;
-	var CW=JSQCanvasWidget(O);
+	JSQCanvasWidget(O);
 	O.div().addClass('MVTemplatesViewPanel');
 
 	this.setChannelColors=function(list) {m_channel_colors=JSQ.clone(list);};
@@ -135,7 +134,7 @@ function MVTemplatesViewPanel(O) {
 		O.update();
 	};
 
-	CW.onPaint(paint);
+	O.onPaint(paint);
 
 	function paint(painter) {
 		var M=m_template.N1();

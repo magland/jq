@@ -14,6 +14,10 @@ function RemoteReadMda(path_in) {
 	this.toMda=function(callback) {toMda(callback);}
 
 	function initialize(callback) {
+		if (!m_path) {
+			console.error('path is empty in RemoteReadMda');
+			return;
+		}
 		if (!callback) callback=function() {};
 		if (m_initialized) {
 			callback({success:m_initialized_success,error:m_initialized_error});
@@ -73,7 +77,6 @@ function RemoteReadMda(path_in) {
 	function readChunk(i,size,callback) {
 		that.initialize(function() {
 			//don't make excessive calls... once we fail, that's it.
-			console.log('------');
 			if ((!m_initialized)||(!m_initialized_success)) {
 				callback({success:false,error:'RemoteReadMda not initialized successfully'});
 				return;
@@ -82,17 +85,14 @@ function RemoteReadMda(path_in) {
 				callback({success:false,error:'RemoteReadMda: Download already failed.'});
 				return;
 			}
-			console.log('------');
 			var X=new Mda();
 			X.allocate(size,1);
 			var ii1 = i; //start index of the remote array
 	    	var ii2 = i + size - 1; //end index of the remote array
 	    	var jj1 = Math.floor(ii1 / m_download_chunk_size); //start chunk index of the remote array
 	    	var jj2 = Math.floor(ii2 / m_download_chunk_size); //end chunk index of the remote array
-	    	console.log('------');
 	    	if (jj1 == jj2) { //in this case there is only one chunk we need to worry about
 	        	download_chunk_at_index(jj1,function(ret) { //download the single chunk
-	        		console.log('------');
 	        		if (!ret.success) {
 	        			callback(ret);
 	        			m_download_failed=true;
@@ -146,9 +146,6 @@ function RemoteReadMda(path_in) {
     	var url=m_path;
     	var url0=url+'?a=readChunk&output=text&index='+(ii * m_download_chunk_size)+'&size='+(size)+'&datatype='+(m_remote_datatype);
     	$.get(url0,function(binary_url) {
-    		console.log('@@@@@@@@@@@@@@@@@@@@@@@@');
-    		console.log(url0);
-    		console.log(binary_url);
     		if (!binary_url) {
     			callback({success:false,error:'binary_url is empty'});
     			return;
@@ -183,7 +180,8 @@ function RemoteReadMda(path_in) {
 	var m_initialized=false;
 	var m_initialized_error='';
 	var m_initialized_success=false;
-	var m_download_chunk_size=500000;
+	/// TODO: important change this to 500000
+	var m_download_chunk_size=5000000;
 	var m_info={
 		N1:1,N2:1,N3:1,checksum:'',file_last_modified:0
 	}

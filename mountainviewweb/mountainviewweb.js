@@ -14,7 +14,10 @@ function jsqmain(query) {
     var WW=new MVMainWindow(0,mvcontext);
     WW.showFullBrowser();
 
-    var VV=new MVTemplatesView(0,mvcontext);
+    //var VV=new MVTemplatesView(0,mvcontext);
+    //WW.setView(VV);
+
+    var VV=new MVAmpHistView(0,mvcontext);
     WW.setView(VV);
 
     var GCW=new GeneralControlWidget(0,mvcontext,WW);
@@ -26,13 +29,8 @@ function jsqmain(query) {
     var B=new RemoteReadMda();
     
     B.setPath(firings_url,function(res) {
-    	console.log(res);
-    	console.log(B.N1()+'x'+B.N2()+'x'+B.N3());
     	B.readChunk(0,20,function(res) {
-            console.log(res);
     		var chunk=res.chunk;
-            console.log(chunk.N1()+'x'+chunk.N2()+'x'+chunk.N3());
-    		console.log(chunk.data());
     	});
     });
     */
@@ -54,13 +52,10 @@ function jsqmain(query) {
         var stdevs_fname = X.makeOutputFileUrl("stdevs");
 
         X.runProcess(function(res) {
-            console.log(res);
             var templates=new RemoteReadMda();
-            console.log(templates_fname);
             templates.setPath(templates_fname);
             templates.toMda(function(res) {
                 var templates0=res.mda;
-                console.log(templates0.N1()+'x'+templates0.N2()+'x'+templates0.N3());
                 WW.setTemplates(templates0);
             });
 

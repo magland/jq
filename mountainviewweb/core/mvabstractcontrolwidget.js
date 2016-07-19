@@ -3,23 +3,22 @@ function MVAbstractControlWidget(O,mvcontext,main_window) {
 	JSQWidget(O);
 	O.div().addClass('MVAbstractControlWidget');
 
-	this.mvContext=function() {return mvcontext;};
-	this.mainWindow=function() {return main_window;};
+	O.mvContext=function() {return mvcontext;};
+	O.mainWindow=function() {return main_window;};
 
-	this.title=function() {return 'title should be overridden'};
-	this.updateContext=function() {console.log('updateContext should be overridden');};
-	this.updateControls=function() {console.log('updateControls should be overridden');};
+	O.title=function() {return 'title should be overridden'};
+	O.updateContext=function() {console.log ('updateContext should be overridden');};
+	O.updateControls=function() {console.log ('updateControls should be overridden');};
 
 	//protected
-	var P={};
-	P.controlValue=function(name) {return controlValue(name);};
-	P.setControlValue=function(name,val) {setControlValue(name,val);};
-	P.setControlEnabled=function(name,val) {setControlEnabled(name,val);};
-	P.createIntControl=function(name) {return createIntControl(name);};
-	P.createDoubleControl=function(name) {return createIntControl(name);};
-	P.createButtonControl=function(name,label,callback) {return createButtonControl(name,label,callback);};
+	O.controlValue=function(name) {return controlValue(name);};
+	O.setControlValue=function(name,val) {setControlValue(name,val);};
+	O.setControlEnabled=function(name,val) {setControlEnabled(name,val);};
+	O.createIntControl=function(name) {return createIntControl(name);};
+	O.createDoubleControl=function(name) {return createIntControl(name);};
+	O.createButtonControl=function(name,label,callback) {return createButtonControl(name,label,callback);};
 
-	P.updateControlsOn=function(sender,signal) {JSQ.connect(sender,signal,O,O.updateControls);};
+	O.updateControlsOn=function(sender,signal) {JSQ.connect(sender,signal,O,O.updateControls);};
 
 	function controlValue(name) {
 		if  (name in m_int_controls) return Number(m_int_controls[name].val());
@@ -53,5 +52,4 @@ function MVAbstractControlWidget(O,mvcontext,main_window) {
 	var m_int_controls=[];
 	var m_double_controls=[];
 	var m_button_controls=[];
-	return P;
 }

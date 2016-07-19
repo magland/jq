@@ -37,7 +37,6 @@ function JSQWidget(O) {
 		m_div.mouseleave(function(e) {mouse_actions.emit('leave',jq_mouse_event($(this),e));});
 		m_div.on('dragstart',function() {return false;});
 		m_div.bind('mousewheel', function(e){
-			console.log('wheel 1');
 			wheel_actions.emit('wheel',jq_wheel_event($(this),e));
     	});
     	m_div.css({overflow:"hidden"});

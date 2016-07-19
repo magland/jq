@@ -1,13 +1,14 @@
 function HistogramView(O) {
 	O=O||this;
-	var CW=JSQCanvasWidget(O);
+	JSQCanvasWidget(O);
 
-	this.setData=function(data) {m_data=data.slice();};
-	this.setSecondData=function(data) {m_second_data=data.slice();};
-	this.setBins=function(bin_min,bin_max,num_bins) {setBins(bin_min,bin_max,num_bins);};
-	this.autoSetBins=function(num_bins) {autoSetBins(num_bins);};
+	O.setData=function(data) {m_data=data.slice();};
+	O.setSecondData=function(data) {m_second_data=data.slice();};
+	O.setBins=function(bin_min,bin_max,num_bins) {setBins(bin_min,bin_max,num_bins);};
+	O.autoSetBins=function(num_bins) {autoSetBins(num_bins);};
+    O.setDrawVerticalAxisAtZero=function(val) {m_draw_vertical_axis_at_zero=val;};
 	
-	CW.onPaint(paint);
+	O.onPaint(paint);
 
 	var m_data=[];
 	var m_second_data=[];
@@ -114,6 +115,7 @@ function HistogramView(O) {
     			col=modify_color_for_second_histogram(col);
     			line_color=modify_color_for_second_histogram(line_color);
     		}
+            console.log(col);
     		for (var i=0; i<m_num_bins; i++) {
     			var pt1=coord2pix([m_bin_centers[i]-spacing/2,0],W,H);
     			var pt2=coord2pix([m_bin_centers[i]+spacing/2,bin_counts[i]],W,H);

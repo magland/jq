@@ -30,12 +30,13 @@ opts.STYLESHEETS.push(
 opts.SOURCEPATH.push('core')
 opts.SCRIPTS.push(
 	'mountainprocessrunner.js','mvabstractview.js','mvcontext.js',
-	'mvcontrolpanel.js','mvmainwindow.js','mvabstractcontrolwidget.js'
+	'mvcontrolpanel.js','mvmainwindow.js','mvabstractcontrolwidget.js',
+	'mvpanelwidget.js'
 );
 
 opts.SOURCEPATH.push('views')
 opts.SCRIPTS.push(
-	'mvtemplatesview.js','mvpanelwidget.js'
+	'mvtemplatesview.js','histogramview.js','mvhistogramgrid.js','mvamphistview.js'
 );
 
 opts.SOURCEPATH.push('controlwidgets')

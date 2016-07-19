@@ -1,22 +1,22 @@
 function MVHistogramGrid(O,mvcontext) {
 	O=O||this;
-	var P=MVAbstractView(O,mvcontext);
+	MVAbstractView(O,mvcontext);
 
 	O.prepareCalculation=function() {console.log ('prepareCalculation() should be overloaded.');};
-	O.runCalculation=function(callback) {console.log ('runCalculation() should be overloaded.');};
+	O.runCalculation=function(opts,callback) {console.log ('runCalculation() should be overloaded.');};
 	O.onCalculationFinished=function() {console.log ('onCalculationFinished() should be overloaded.');};
 
 	JSQ.connect(O,'sizeChanged',O,update_layout);
 	JSQ.connect(mvcontext,'optionsChanged',O,O.recalculate);
-	JSQ.connect(mvcontext,'currentClusterPairChanged',O,do_highlighting_and_captions;
+	JSQ.connect(mvcontext,'currentClusterPairChanged',O,do_highlighting_and_captions);
 	JSQ.connect(mvcontext,'selectedClusterPairsChanged',O,do_highlighting_and_captions);
 
 	//protected methods
-	P.setHorizontalScaleAxis=function(opts) {setHorizontalScaleAxis(opts);};
-	P.setHistogramViews=function(views) {setHistogramViews(views);};
-	P.histogramViews=function() {return m_histogram_views;};
-    P.setPairMode=function(val) {m_pair_mode=val;};
-    P.pairMode=function() {return m_pair_mode;};
+	O.setHorizontalScaleAxis=function(opts) {setHorizontalScaleAxis(opts);};
+	O.setHistogramViews=function(views) {setHistogramViews(views);};
+	O.histogramViews=function() {return m_histogram_views;};
+    O.setPairMode=function(val) {m_pair_mode=val;};
+    O.pairMode=function() {return m_pair_mode;};
 
 	var m_panel_widget=new MVPanelWidget();
 	m_panel_widget.setParent(O);
@@ -50,7 +50,7 @@ function MVHistogramGrid(O,mvcontext) {
 	function setHistogramViews(views) {
 		m_panel_widget.clearPanels();
 		var NUM=views.length;
-		var num_rows = Math.floor(sqrt(NUM));
+		var num_rows = Math.floor(Math.sqrt(NUM));
 		if (num_rows < 1) num_rows=1;
 		var num_cols=Math.floor((NUM+num_rows-1)/num_rows);
 		m_num_columns=num_cols;

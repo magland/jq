@@ -6,7 +6,7 @@ function MVAbstractView(O,mvcontext) {
 	O.recalculate=function() {recalculate();};
 
 	O.prepareCalculation=function() {console.log ('prepareCalculation() should be overloaded.');};
-	O.runCalculation=function(callback) {console.log ('runCalculation() should be overloaded.');};
+	O.runCalculation=function(opts,callback) {console.log ('runCalculation() should be overloaded.');};
 	O.onCalculationFinished=function() {console.log ('onCalculationFinished() should be overloaded.');};
 
 	function recalculate() {
@@ -36,6 +36,4 @@ function MVAbstractView(O,mvcontext) {
 		calculating_div.remove();
 		O.setVisible(true);
 	}
-
-	return {}; //protected data
 }

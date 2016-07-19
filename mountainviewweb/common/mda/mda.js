@@ -112,7 +112,6 @@ function Mda() {
 		}
 	};
 	this.load=function(url,callback) {
-		console.log('loading: '+url);
 		$.ajax({
 			url: url,
 			type: "GET",
@@ -156,8 +155,6 @@ function Mda() {
 		});
 	};
 	this.minimum=function() {
-		console.log(m_data);
-		console.log(m_data.length);
 		if (m_data.length===0) return 0;
 		var ret=m_data[0];
 		for (var i=0; i<m_data.length; i++) {

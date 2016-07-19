@@ -17,7 +17,7 @@ function jsqmake(opts) {
 		console.error('Unable to write target: '+target_path);
 		return false;
 	}
-	console.log('Wrote target: '+target_path);
+	console.log ('Wrote target: '+target_path);
 	return true;
 
 	function get_include_text(opts) {

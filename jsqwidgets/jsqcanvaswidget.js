@@ -5,9 +5,8 @@ function JSQCanvasWidget(O) {
 	O.update=function() {private_signals.emit('paint');};
 
 	//protected methods
-	var P={};
 	var private_signals=new JSQObject();
-	P.onPaint=function(handler) {paint(handler);};
+	O.onPaint=function(handler) {paint(handler);};
 
 	JSQ.connect(O,'sizeChanged',O,update_canvas_size);
 
@@ -34,8 +33,6 @@ function JSQCanvasWidget(O) {
 			m_painter._finalize();
 		},'queued');
 	}
-
-	return P; //protected methods
 }
 
 function JSQCanvasPainter(canvas) {
@@ -53,8 +50,12 @@ function JSQCanvasPainter(canvas) {
 	};
 	this.fillRect=function(x,y,W,H,brush) {
 		if (typeof brush === 'string') brush={color:brush};
+		if (!('color' in brush)) brush={color:brush};
 		ctx.fillStyle=to_color(brush.color);
 		ctx.fillRect(x,y,W,H);
+	};
+	this.drawRect=function(x,y,W,H) {
+		ctx.strokeRect(x,y,W,H);
 	};
 	this.drawPath=function(painter_path) {
 		ctx.strokeStyle=to_color(m_pen.color);
