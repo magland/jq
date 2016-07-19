@@ -36,4 +36,6 @@ function MVAbstractView(O,mvcontext) {
 		calculating_div.remove();
 		O.setVisible(true);
 	}
+
+	return {}; //protected data
 }
