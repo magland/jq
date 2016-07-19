@@ -1,4 +1,4 @@
-function MVHistogramGrid(O,mvcontext) {
+function MVHistogramGrid(O,mvcontext,pair_mode) {
 	O=O||this;
 	MVAbstractView(O,mvcontext);
 
@@ -8,21 +8,25 @@ function MVHistogramGrid(O,mvcontext) {
 
 	JSQ.connect(O,'sizeChanged',O,update_layout);
 	JSQ.connect(mvcontext,'optionsChanged',O,O.recalculate);
-	JSQ.connect(mvcontext,'currentClusterPairChanged',O,do_highlighting_and_captions);
-	JSQ.connect(mvcontext,'selectedClusterPairsChanged',O,do_highlighting_and_captions);
+	if (pair_mode) {
+		JSQ.connect(mvcontext,'currentClusterPairChanged',O,do_highlighting_and_captions);
+		JSQ.connect(mvcontext,'selectedClusterPairsChanged',O,do_highlighting_and_captions);
+	}
+	else {
+		JSQ.connect(mvcontext,'currentClusterChanged',O,do_highlighting_and_captions);
+		JSQ.connect(mvcontext,'selectedClustersChanged',O,do_highlighting_and_captions);	
+	}
 
 	//protected methods
 	O.setHorizontalScaleAxis=function(opts) {setHorizontalScaleAxis(opts);};
 	O.setHistogramViews=function(views) {setHistogramViews(views);};
 	O.histogramViews=function() {return m_histogram_views;};
-    O.setPairMode=function(val) {m_pair_mode=val;};
-    O.pairMode=function() {return m_pair_mode;};
 
 	var m_panel_widget=new MVPanelWidget();
 	m_panel_widget.setParent(O);
-	var m_pair_mode=true;
 	var m_num_columns=-1;
 	var m_horizontal_scale_axis_data={use_it:false,label:'for exampe 100 ms'};
+	var m_histogram_views=[];
 
 	function update_layout() {
 		var ss=O.size();
@@ -30,6 +34,17 @@ function MVHistogramGrid(O,mvcontext) {
 		m_panel_widget.setSize([ss[0]-10,ss[1]-10]);
 	}
 	function do_highlighting_and_captions() {
+		var k=O.mvContext().currentCluster();
+		var ks=O.mvContext().selectedClusters();
+		for (var i=0; i<m_histogram_views.length; i++) {
+			var HV=m_histogram_views[i];
+			var k0=HV.property('k');
+			if (k0==k) HV.div().addClass('current');
+			else HV.div().removeClass('current');
+			if (k0 in ks) HV.div().addClass('selected');
+			else HV.div().removeClass('selected');
+		}
+
 		//TODO: highlight the current and selected pairs and set the captions
 		/*
 		var k=O.mvContext().currentCluster();
@@ -44,10 +59,15 @@ function MVHistogramGrid(O,mvcontext) {
 		}
 		*/
 	}
+	function histogram_clicked(sender,modifiers) {
+		var k=sender.property('k');
+		O.mvContext().clickCluster(k,modifiers);
+	}
 	function setHorizontalScaleAxis(opts) {
 		m_horizontal_scale_axis_data=JSQ.clone(opts);
 	}
 	function setHistogramViews(views) {
+		m_histogram_views=views.slice();
 		m_panel_widget.clearPanels();
 		var NUM=views.length;
 		var num_rows = Math.floor(Math.sqrt(NUM));
@@ -57,6 +77,7 @@ function MVHistogramGrid(O,mvcontext) {
 
 		for (var jj=0; jj<NUM; jj++) {
 			var HV=views[jj];
+			JSQ.connect(HV,'clicked',O,histogram_clicked);
 			var row0=Math.floor(jj/num_cols);
 			var col0=jj-row0*num_cols;
 			m_panel_widget.addPanel(row0,col0,HV);

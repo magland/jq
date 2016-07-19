@@ -66,6 +66,7 @@ function MVContext(O) {
     }
     function clickCluster(k,modifiers) {
     	if (k<0) return;
+        modifiers=modifiers||{};
     	var tmp=JSQ.clone(m_selected_clusters);
     	if (modifiers.ctrlKey) {
     		if (k in m_selected_clusters) {

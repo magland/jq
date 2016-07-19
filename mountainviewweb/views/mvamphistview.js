@@ -31,9 +31,10 @@ function MVAmpHistView(O,mvcontext) {
     			//set colors
     			HV.setBins(bin_min,bin_max,num_bins);
     			HV.setDrawVerticalAxisAtZero(true);
-    			//HV.setXRange(-max00,max00);
-    			//HV.autoCenterXRange();
+    			HV.setXRange(-max00,max00);
+    			HV.autoCenterXRange();
     			HV.setProperty('k',k0);
+
     			views.push(HV);
     		//}
     	}
@@ -48,6 +49,7 @@ function MVAmpHistView(O,mvcontext) {
 				ret=Math.min(ret,H.data[j]);
 			}
 		}
+		return ret;
 	}
 	function compute_max2(histograms) {
 		var ret=0;
@@ -57,6 +59,7 @@ function MVAmpHistView(O,mvcontext) {
 				ret=Math.max(ret,H.data[j]);
 			}
 		}
+		return ret;
 	}
 }
 

@@ -2,11 +2,15 @@ function HistogramView(O) {
 	O=O||this;
 	JSQCanvasWidget(O);
 
-	O.setData=function(data) {m_data=data.slice();};
+	O.setData=function(data) {m_data=data.slice(); m_update_required=true;};
 	O.setSecondData=function(data) {m_second_data=data.slice();};
 	O.setBins=function(bin_min,bin_max,num_bins) {setBins(bin_min,bin_max,num_bins);};
 	O.autoSetBins=function(num_bins) {autoSetBins(num_bins);};
     O.setDrawVerticalAxisAtZero=function(val) {m_draw_vertical_axis_at_zero=val;};
+    O.setXRange=function(min0,max0) {m_xrange=[min0,max0]; O.update();};
+    O.autoCenterXRange=function() {autoCenterXRange();};
+
+    O.onMouseRelease(function(evt) {O.emit('clicked',evt.modifiers);});
 	
 	O.onPaint(paint);
 
@@ -58,6 +62,9 @@ function HistogramView(O) {
     }
 
 	function update_bin_counts() {
+        if (m_bin_centers.length<2) {
+            return;
+        }
 		for (var i=0; i<m_num_bins; i++) {
 			m_bin_counts[i]=0;
 			m_second_bin_counts[i]=0;
@@ -73,14 +80,15 @@ function HistogramView(O) {
     		else {
     			list=m_second_data.slice();
     		}
-    		list.sort();
+    		//list.sort(); //javascript does an alphabetical sort by default, even when data are numbers, which is horrible!!!!!! (wasted half a day)
+            list.sort(function(a, b){return a-b});
     		if (m_num_bins<1) return;
     		var spacing=m_bin_centers[1]-m_bin_centers[0];
     		var jj=0;
     		for (var i=0; i<list.length; i++) {
     			var val=list[i];
     			while ((jj+1<m_num_bins)&&(m_bin_centers[jj]+spacing/2<val)) jj++;
-    			if ((val>=m_bin_centers[jj]-spacing/2)&&(m_bin_centers[jj]+spacing/2<val)) {
+    			if ((val>=m_bin_centers[jj]-spacing/2)&&(val<=m_bin_centers[jj]+spacing/2)) {
     				if (pass==1) m_bin_counts[jj]++;
     				else m_second_bin_counts[jj]++;
     			}
@@ -115,7 +123,6 @@ function HistogramView(O) {
     			col=modify_color_for_second_histogram(col);
     			line_color=modify_color_for_second_histogram(line_color);
     		}
-            console.log(col);
     		for (var i=0; i<m_num_bins; i++) {
     			var pt1=coord2pix([m_bin_centers[i]-spacing/2,0],W,H);
     			var pt2=coord2pix([m_bin_centers[i]+spacing/2,bin_counts[i]],W,H);
@@ -151,14 +158,31 @@ function HistogramView(O) {
     	}
 
     	var xfrac=0.5;
-    	if (xmax>xmin) xfrac=(pt[0]-xmin)/(xmax-xmin);
+    	if (xmax>xmin) xfrac=(coord[0]-xmin)/(xmax-xmin);
     	var yfrac=0.5;
-    	if (ymax>ymin) yfrac=(pt[1]-ymin)/(ymax-ymin);
+    	if (ymax>ymin) yfrac=(coord[1]-ymin)/(ymax-ymin);
 
     	var x0=m_margin_left+xfrac*(W-m_margin_left-m_margin_right);
     	var y0=H-(m_margin_bottom+yfrac*(H-m_margin_top-m_margin_bottom));
 
     	return [x0,y0];
+    }
+
+    function compute_mean(X) {
+        if (X.length==0) return 0;
+        var sum=0;
+        for (var i=0; i<X.length; i++) {
+            sum+=X[i];
+        }
+        return sum/X.length;
+    }
+
+    function autoCenterXRange() {
+        var mean_value=compute_mean(m_data);
+        var xrange=JSQ.clone(m_xrange);
+        var center1=(xrange[0]+xrange[1])/2;
+        xrange=[xrange[0]+mean_value-center1,xrange[1]+mean_value-center1];
+        O.setXRange(xrange[0],xrange[1]);
     }
 
     function modify_color_for_second_histogram(col) {
