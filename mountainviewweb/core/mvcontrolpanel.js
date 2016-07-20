@@ -1,6 +1,7 @@
 function MVControlPanel(O) {
 	O=O||this;
 	JSQWidget(O);
+	O.div().addClass('MVControlPanel');
 
 	this.addControlWidget=function(W) {addControlWidget(W);};
 

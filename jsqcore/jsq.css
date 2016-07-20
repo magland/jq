@@ -5,3 +5,27 @@
 .jsqpanelwidget_current_panel {
 	border: solid 2px black
 }
+
+.JSQTabBar td {
+	border-top: 1px solid lightgray;
+	border-right: 1px solid lightgray;
+	border-left: 1px solid lightgray;
+	background: lightgray;
+	color: gray;
+}
+.JSQTabBar td.current_tab {
+	border-top: 1px solid gray;
+	border-right: 1px solid gray;
+	border-left: 1px solid gray;
+	background: white;
+	color: black;
+}
+
+.JSQTabBar a {
+	text-decoration: none;
+	color: black;
+}
+
+.JSQTabBar {
+	border-bottom: solid 1px gray;
+}

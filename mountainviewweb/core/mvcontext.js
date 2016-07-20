@@ -13,7 +13,7 @@ function MVContext(O) {
 	this.mlProxyUrl=function() {return m_mlproxy_url;};
 	this.currentTimeseries=function() {return m_timeseries;};
 	this.firings=function() {return m_firings;};
-	this.option=function(name) {return JSQ.clone(m_options[name]||'');};
+	this.option=function(name,default_val) {if (name in m_options) return JSQ.clone(m_options[name]); else return (default_val||'');};
 
 	/////////////////////////////////////////////////
 	// COLORS

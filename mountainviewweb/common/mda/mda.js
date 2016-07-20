@@ -112,45 +112,19 @@ function Mda() {
 		}
 	};
 	this.load=function(url,callback) {
-		$.ajax({
-			url: url,
-			type: "GET",
-			dataType: "binary",
-			processData: false,
-			responseType: 'arraybuffer',
-			success: function(result){
-				if (result.byteLength<64) {
-					callback({success:false,error:'Downloaded file is too small: '+result.byteLength});
-					return;
-				}
-				var X=new Int32Array(result.slice(0,64));
-				var num_bytes_per_entry=X[1];
-				var num_dims=X[2];
-				var dims=[];
-				if ((num_dims<2)||(num_dims>5)) {
-					callback({success:false,error:'Invalid number of dimensions: '+num_dims});
-					return;
-				} 
-				for (var i=0; i<num_dims; i++) {
-					dims.push(X[3+i]);
-				}
+		if (!(url in s_mda_binary_loaders)) {
+			s_mda_binary_loaders[url]=new MdaBinaryLoader(url);
+		}
+
+		s_mda_binary_loaders[url].load(function(ret) {
+			if (ret.data.length>0) {
+				var dims=ret.dims;
 				that.allocate(dims[0],dims[1]||1,dims[2]||1,dims[3]||1,dims[4]||1);
-				var dtype=get_dtype_string(X[0]);
-				var header_size=(num_dims+3)*4;
-				if (dtype=='float32') {
-					m_data=new Float32Array(result.slice(header_size));
-					callback({success:true});
-					return;
-				}
-				else if (dtype=='float64') {
-					m_data=new Float64Array(result.slice(header_size));
-					callback({success:true});
-					return;	
-				}
-				else {
-					callback({success:false,error:'Unsupported data type: '+dtype});
-					return;
-				}
+				m_data=ret.data;
+				callback({success:true});
+			}
+			else {
+				callback({success:false});
 			}
 		});
 	};
@@ -170,6 +144,84 @@ function Mda() {
 		}
 		return ret;
 	};
+	
+
+	var m_data=new Float32Array(1);
+	var m_dims=[1,1,1,1,1];
+	var m_total_size=1;
+}
+
+var s_mda_binary_loaders={};
+function MdaBinaryLoader(url) {
+	this.load=function(callback) {
+		if (m_done_loading) {
+			callback(m_data.slice());
+			return;
+		}
+		JSQ.connect(m_signaler,'loaded',0,function() {
+			callback({data:m_data.slice(),dims:JSQ.clone(m_dims)});	
+		});
+		if (!m_is_loading) {
+			m_is_loading=true;
+			start_loading();
+		}
+	}
+
+	var m_signaler=new JSQObject();
+	var m_is_loading=false;
+	var m_done_loading=false;
+	var m_data=[];
+	var m_dims=[];
+
+	function start_loading() {
+		$.ajax({
+			url: url,
+			type: "GET",
+			dataType: "binary",
+			processData: false,
+			responseType: 'arraybuffer',
+			success: function(result){
+				if (result.byteLength<64) {
+					console.error('Downloaded file is too small: '+result.byteLength);
+					m_data=[];
+					m_signaler.emit('loaded');
+					return;
+				}
+				var X=new Int32Array(result.slice(0,64));
+				var num_bytes_per_entry=X[1];
+				var num_dims=X[2];
+				m_dims=[];
+				if ((num_dims<2)||(num_dims>5)) {
+					console.error('Invalid number of dimensions: '+num_dims);
+					m_data=[];
+					m_signaler.emit('loaded');
+					return;
+				} 
+				for (var i=0; i<num_dims; i++) {
+					m_dims.push(X[3+i]);
+				}
+				var dtype=get_dtype_string(X[0]);
+				var header_size=(num_dims+3)*4;
+				if (dtype=='float32') {
+					m_data=new Float32Array(result.slice(header_size));
+					m_signaler.emit('loaded');
+					return;
+				}
+				else if (dtype=='float64') {
+					m_data=new Float64Array(result.slice(header_size));
+					m_signaler.emit('loaded');
+					return;	
+				}
+				else {
+					callback({success:false,error:'Unsupported data type: '+dtype});
+					console.error('Unsupported dtype: '+dtype);
+					m_data=[];
+					m_signaler.emit('loaded');
+					return;
+				}
+			}
+		});
+	}
 	function get_dtype_string(num) {
 		if (num==-2) return 'byte';
 		if (num==-3) return 'float32';
@@ -179,10 +231,6 @@ function Mda() {
 		if (num==-7) return 'float64';
 		return '';
 	}
-
-	var m_data=new Float32Array(1);
-	var m_dims=[1,1,1,1,1];
-	var m_total_size=1;
 }
 
 /**

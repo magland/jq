@@ -30,10 +30,10 @@ function MVAbstractView(O,mvcontext) {
 				top:O.top()
 			});
 		}
-		O.setVisible(false);
+		//O.setVisible(false);
 	}
 	function hide_calculating_message() {
 		calculating_div.remove();
-		O.setVisible(true);
+		//O.setVisible(true);
 	}
 }
