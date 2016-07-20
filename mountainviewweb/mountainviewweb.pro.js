@@ -16,7 +16,7 @@ opts.STYLESHEETS.push(
 
 opts.SOURCEPATH.push('../jsqwidgets')
 opts.SCRIPTS.push(
-	'jsqcanvaswidget.js'
+	'jsqcanvaswidget.js','jsqtabwidget.js'
 );
 
 opts.SOURCEPATH.push('common/mda')

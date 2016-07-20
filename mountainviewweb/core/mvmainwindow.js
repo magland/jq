@@ -3,20 +3,21 @@ function MVMainWindow(O,mvcontext) {
 	JSQWidget(O);
 
 	this.addControlWidget=function(W) {m_control_panel.addControlWidget(W);};
-	this.setView=function(V) {setView(V);};
+	this.addView=function(V,label) {addView(V,label);};
 
 	JSQ.connect(O,'sizeChanged',O,update_layout);
 
 	var m_control_panel=new MVControlPanel(0,mvcontext);
 	m_control_panel.setParent(O);
-	var m_view=new MVAbstractView();
-	m_view.setParent(O);
+	var m_views=[];
+	var m_tab_widget=new JSQTabWidget();
+	m_tab_widget.setParent(O);
 
-	function setView(V) {
-		m_view.destroy();
-		m_view=V;
-		V.setParent(O);
-		update_layout();
+	function addView(V,label) {
+		m_views.push({
+			V:V,label:label
+		});
+		m_tab_widget.addTab(V,label);
 		setTimeout(function() {
 			V.recalculate();
 		},10);
@@ -33,8 +34,8 @@ function MVMainWindow(O,mvcontext) {
 		m_control_panel.setSize(W1,O.height());
 		m_control_panel.setPosition(0,0);
 
-		m_view.setSize(W2,O.height());
-		m_view.setPosition(W1,0);
+		m_tab_widget.setSize(W2,O.height());
+		m_tab_widget.setPosition(W1,0);
 	}
 
 }

@@ -8,6 +8,7 @@ function JSQCore() {
 	this.computeSha1SumOfString=function(str) {return computeSha1SumOfString(str);};
 	this.numSet2List=function(set) {return numSet2List(set);};
 	this.numSort=function(array) {numSort(array);};
+	this.makeRandomId=function(num_chars) {return make_random_id(num_chars||10);};
 
 	this._object=function(id) {return object(id);};
 	this._addObject=function(id,obj) {addObject(id,obj);};
@@ -119,7 +120,16 @@ function JSQConnectionManager() {
 	var m_signals={};
 }
 
+function make_random_id(num_chars)
+{
+    var text = "";
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
+    for( var i=0; i < num_chars; i++ )
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+    return text;
+}
 
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */

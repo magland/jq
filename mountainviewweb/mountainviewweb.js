@@ -24,14 +24,14 @@ function jsqmain(query) {
     var WW=new MVMainWindow(0,mvcontext);
     WW.showFullBrowser();
 
-    //var VV=new MVTemplatesView(0,mvcontext);
-    //WW.setView(VV);
+    var VV=new MVTemplatesView(0,mvcontext);
+    WW.addView(VV,'Templates');
 
-    //var VV=new MVAmpHistView(0,mvcontext);
-    //WW.setView(VV);
+    var VV=new MVAmpHistView(0,mvcontext);
+    WW.addView(VV,'Amplitudes');
 
     var VV=new MVCrossCorrelogramsView(0,mvcontext,'All_Auto_Correlograms');
-    WW.setView(VV);
+    WW.addView(VV,'Auto-Correlograms');
 
     var GCW=new GeneralControlWidget(0,mvcontext,WW);
     WW.addControlWidget(GCW);

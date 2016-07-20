@@ -64,7 +64,7 @@ function JSQObject(O) {
 	}
 	O._set_is_widget=function() {m_is_widget=true;}
 
-	var m_object_id=make_random_id(10);
+	var m_object_id=JSQ.makeRandomId(10);
 	var m_parent_id=null;;
 	var m_child_ids={};
 	var m_properties={};
@@ -73,13 +73,3 @@ function JSQObject(O) {
 	JSQ._addObject(m_object_id,O);
 }
 
-function make_random_id(num_chars)
-{
-    var text = "";
-    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-
-    for( var i=0; i < num_chars; i++ )
-        text += possible.charAt(Math.floor(Math.random() * possible.length));
-
-    return text;
-}
