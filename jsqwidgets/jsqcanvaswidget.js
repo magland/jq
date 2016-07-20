@@ -40,7 +40,7 @@ function JSQCanvasPainter(canvas) {
 	var ctx=canvas[0].getContext('2d');
 
 	this.pen=function() {return JSQ.clone(m_pen);};
-	this.setPen=function(pen) {m_pen=JSQ.clone(pen);};
+	this.setPen=function(pen) {setPen(pen);};
 
 	this._initialize=function(W,H) {
 		//ctx.fillStyle='black';
@@ -58,7 +58,6 @@ function JSQCanvasPainter(canvas) {
 		ctx.strokeRect(x,y,W,H);
 	};
 	this.drawPath=function(painter_path) {
-		ctx.strokeStyle=to_color(m_pen.color);
 		painter_path._draw(ctx);
 	};
 	this.drawLine=function(x1,y1,x2,y2) {
@@ -67,6 +66,11 @@ function JSQCanvasPainter(canvas) {
 		ppath.lineTo(x2,y2);
 		that.drawPath(ppath);
 	};
+
+	function setPen(pen) {
+		m_pen=JSQ.clone(pen);
+		ctx.strokeStyle=to_color(m_pen.color);
+	}
 
 	function to_color(col) {
 		if (typeof col === 'string') return col;

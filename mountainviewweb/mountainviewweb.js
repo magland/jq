@@ -1,15 +1,25 @@
 function jsqmain(query) {
 	var context={};
 
-    var timeseries_url='http://datalaboratory.org:8020/mdaserver/franklab/results/20160426_r1_nt16/ms_20160605/pre2.mda';
-    var firings_url='http://datalaboratory.org:8020/mdaserver/franklab/results/20160426_r1_nt16/ms_20160605/firings_new.mda';
+
     var mlproxy_url='http://datalaboratory.org:8020';
+    var base_url='http://datalaboratory.org:8020/mdaserver/franklab/results/20160426_r1_nt16/ms_20160605';
+    var timeseries_url=base_url+'/pre2.mda';
+    var firings_url=base_url+'/firings_new.mda';
+
+    //var mlproxy_url='http://datalaboratory.org:8020';
+    //var base_url='http://datalaboratory.org:8020/mdaserver/NeuroCube/NC-1';
+    //var timeseries_url=base_url+'/pre2.mda';
+    //var firings_url=base_url+'/firings.mda';
+    
 
     var mvcontext=new MVContext();
     mvcontext.setTimeseries(new RemoteReadMda(timeseries_url));
     mvcontext.setFirings(new RemoteReadMda(firings_url));
     mvcontext.setMLProxyUrl(mlproxy_url);
     mvcontext.setOption('clip_size',150);
+    mvcontext.setOption('cc_max_dt_msec',100);
+    mvcontext.setSampleRate(30000);
 
     var WW=new MVMainWindow(0,mvcontext);
     WW.showFullBrowser();
@@ -17,7 +27,10 @@ function jsqmain(query) {
     //var VV=new MVTemplatesView(0,mvcontext);
     //WW.setView(VV);
 
-    var VV=new MVAmpHistView(0,mvcontext);
+    //var VV=new MVAmpHistView(0,mvcontext);
+    //WW.setView(VV);
+
+    var VV=new MVCrossCorrelogramsView(0,mvcontext,'All_Auto_Correlograms');
     WW.setView(VV);
 
     var GCW=new GeneralControlWidget(0,mvcontext,WW);

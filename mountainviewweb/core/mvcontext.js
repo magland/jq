@@ -2,6 +2,9 @@ function MVContext(O) {
 	O=O||this;
 	JSQObject(O);
 
+    this.sampleRate=function() {return m_sample_rate;};
+    this.setSampleRate=function(rate) {m_sample_rate=rate;};
+
 	this.setMLProxyUrl=function(mlproxy_url) {m_mlproxy_url=mlproxy_url;};
 	this.setTimeseries=function(X) {m_timeseries=X;};
 	this.setFirings=function(X) {m_firings=X;};
@@ -10,7 +13,7 @@ function MVContext(O) {
 	this.mlProxyUrl=function() {return m_mlproxy_url;};
 	this.currentTimeseries=function() {return m_timeseries;};
 	this.firings=function() {return m_firings;};
-	this.option=function(name) {return JSQ.clone(m_options[name]);};
+	this.option=function(name) {return JSQ.clone(m_options[name]||'');};
 
 	/////////////////////////////////////////////////
 	// COLORS
@@ -109,6 +112,8 @@ function MVContext(O) {
     	if (name in m_colors) return m_colors[name];
     	else return default_color;
     }
+
+    var m_sample_rate=0;
 
     var m_colors={};
     var m_channel_colors=mv_default_channel_colors();

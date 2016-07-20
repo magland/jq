@@ -36,7 +36,7 @@ opts.SCRIPTS.push(
 
 opts.SOURCEPATH.push('views')
 opts.SCRIPTS.push(
-	'mvtemplatesview.js','histogramview.js','mvhistogramgrid.js','mvamphistview.js'
+	'mvtemplatesview.js','histogramview.js','mvhistogramgrid.js','mvamphistview.js','mvcrosscorrelogramsview.js'
 );
 
 opts.SOURCEPATH.push('controlwidgets')

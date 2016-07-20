@@ -81,7 +81,7 @@ function HistogramView(O) {
     			list=m_second_data.slice();
     		}
     		//list.sort(); //javascript does an alphabetical sort by default, even when data are numbers, which is horrible!!!!!! (wasted half a day)
-            list.sort(function(a, b){return a-b});
+            JSQ.numSort(list);
     		if (m_num_bins<1) return;
     		var spacing=m_bin_centers[1]-m_bin_centers[0];
     		var jj=0;

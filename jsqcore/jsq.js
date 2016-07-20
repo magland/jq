@@ -6,6 +6,8 @@ function JSQCore() {
 	this.clone=function(obj_or_array) {return clone(obj_or_array);};
 	this.compare=function(X,Y) {return compare(X,Y);};
 	this.computeSha1SumOfString=function(str) {return computeSha1SumOfString(str);};
+	this.numSet2List=function(set) {return numSet2List(set);};
+	this.numSort=function(array) {numSort(array);};
 
 	this._object=function(id) {return object(id);};
 	this._addObject=function(id,obj) {addObject(id,obj);};
@@ -39,6 +41,17 @@ function JSQCore() {
 	}
 	function computeSha1SumOfString(str) {
 		return Sha1.hash(str);
+	}
+	function numSet2List(set) {
+		var ret=[];
+		for (var key in set) {
+			ret.push(key);
+		}
+		JSQ.numSort(ret);
+		return ret;
+	}
+	function numSort(array) {
+		array.sort(function(a,b) {return (a-b);});
 	}
 
 	var m_connection_manager=new JSQConnectionManager();
