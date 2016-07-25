@@ -66,11 +66,14 @@ function jsqmain(query) {
     }
     function create_static_view(mvcontext,obj) {
         delete obj.mvcontext.firings;
+        delete obj.mvcontext.timeseries;
         mvcontext.setFromMVFileObject(obj.mvcontext);
         var X;
         if (obj['view-type']=="MVCrossCorrelogramsWidget") {
-            console.log(obj.options.mode);
             X=new MVCrossCorrelogramsView(0,mvcontext,obj.options.mode);
+        }
+        else if (obj['view-type']=="MVClusterDetailWidget") {
+            X=new MVTemplatesView(0,mvcontext);
         }
         else {
             alert('Unknown view-type: '+obj['view-type']);

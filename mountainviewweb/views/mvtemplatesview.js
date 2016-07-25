@@ -7,6 +7,8 @@ function MVTemplatesView(O,mvcontext) {
 	O.runCalculation=function(opts,callback) {runCalculation(opts,callback);};
 	O.onCalculationFinished=function() {onCalculationFinished();};
 
+	O.loadStaticView=function(X) {loadStaticView(X);};
+
 	JSQ.connect(O,'sizeChanged',O,update_layout);
 	JSQ.connect(mvcontext,'optionsChanged',O,O.recalculate);
 	JSQ.connect(mvcontext,'currentClusterChanged',O,update_highlighting);
@@ -19,7 +21,7 @@ function MVTemplatesView(O,mvcontext) {
 
 	m_panel_widget.onPanelClicked(panelClicked);
 
-	var m_templates=new Mda();
+	var m_cluster_data=[];
 
 	function update_layout() {
 		var ss=O.size();
@@ -40,16 +42,27 @@ function MVTemplatesView(O,mvcontext) {
 	}
 
 	function setTemplates(templates) {
-		m_templates=templates;
 		var M=templates.N1();
 		var T=templates.N2();
+		var K=templates.N3();
+		m_cluster_data=[];
+		for (var k=0; k<K; k++) {
+			var CD={
+				template0:templates.subArray(0,0,k,M,T,1)
+			};
+			m_cluster_data.push(CD);
+		}
+		update_panels();
+	}
+	function update_panels() {
 		m_panel_widget.clearPanels();
 		m_template_panels=[];
-		for (var k=0; k<templates.N3(); k++) {
+		for (var k=0; k<m_cluster_data.length; k++) {
+			var CD=m_cluster_data[k];
 			var Y=new MVTemplatesViewPanel();
-			Y.setProperty('k',k+1);
+			Y.setProperty('k',CD.k||(k+1));
 			Y.setChannelColors(mvcontext.channelColors());
-			Y.setTemplate(templates.subArray(0,0,k,M,T,1));
+			Y.setTemplate(CD.template0);
 			m_panel_widget.addPanel(0,k,Y);
 			m_template_panels.push(Y);
 		}
@@ -61,9 +74,25 @@ function MVTemplatesView(O,mvcontext) {
 		}
 
 	}
+	function min_template_value() {
+		var ret=0;
+		for (var i=0; i<m_cluster_data.length; i++) {
+			var CD=m_cluster_data[i];
+			ret=Math.min(ret,CD.template0.minimum());
+		}
+		return ret;
+	}
+	function max_template_value() {
+		var ret=0;
+		for (var i=0; i<m_cluster_data.length; i++) {
+			var CD=m_cluster_data[i];
+			ret=Math.max(ret,CD.template0.maximum());
+		}
+		return ret;
+	}
 	function update_scale_factors() {
-		var min0=m_templates.minimum();
-		var max0=m_templates.maximum();
+		var min0=min_template_value();
+		var max0=max_template_value();
 		var maxabs=Math.max(Math.abs(min0),Math.abs(max0));
 		if (!maxabs) maxabs=1;
 		var factor=1/maxabs*m_vscale_factor;
@@ -75,14 +104,20 @@ function MVTemplatesView(O,mvcontext) {
 		var that=this;
 
     	//inputs
-    	var mlproxy_url='';
-    	var firings='';
-    	var timeseries='';
-    	var clip_size=100;
+    	this.mlproxy_url='';
+    	this.firings='';
+    	this.timeseries='';
+    	this.clip_size=100;
+
     	//outputs
-    	var templates=new Mda();
+    	this.cluster_data=[];
+
+    	this.loadStaticOutput=function(X) {loadStaticOutput(X);};
+    	this.loaded_from_static_output=false;
 
     	this.run=function(opts,callback) {
+    		that.cluster_data=[];
+
 	    	var X=new MountainProcessRunner();
 	        X.setProcessorName("mv_compute_templates");
 	        var params={};
@@ -99,11 +134,36 @@ function MVTemplatesView(O,mvcontext) {
 	            var templates=new RemoteReadMda();
 	            templates.setPath(templates_fname);
 	            templates.toMda(function(res) {
-	                that.templates=res.mda;
+	                var templates0=res.mda;
+	                var M=templates0.N1();
+		            var T=templates0.N2();
+		            var K=templates0.N3();
+		            for (var k=0; k<K; k++) {
+		            	var template0=templates0.subArray(0,0,k,M,T,1);
+		            	var CD={};
+		            	CD.template0=template0;
+		            	that.cluster_data.push(CD);
+		            }
 	                callback({success:true});
 	            });
 	        });
 	    };
+	    function loadStaticOutput(X) {
+	    	that.cluster_data=[];
+	    	for (var i=0; i<X.cluster_data.length; i++) {
+	    		var CD=X.cluster_data[i];
+	    		CD.stdev0=mda_from_base64(CD.stdev0);
+	    		CD.template0=mda_from_base64(CD.template0);
+	    		that.cluster_data.push(CD);
+	    	}
+	    	that.loaded_from_static_output=true;
+	    }
+	    function mda_from_base64(X) {
+	    	var buf=Base64Binary.decode(X).buffer;
+	    	var A=new Mda();
+	    	A.setFromArrayBuffer(buf);
+	    	return A;
+	    }
     }
     var m_calculator=new Calculator();
     function prepareCalculation() {
@@ -113,10 +173,22 @@ function MVTemplatesView(O,mvcontext) {
     	m_calculator.clip_size=mvcontext.option('clip_size');
     }
     function runCalculation(opts,callback) {
-    	m_calculator.run(opts,callback);
+    	if (!m_calculator.loaded_from_static_output) {
+			m_calculator.run(opts,callback);
+		}
+		else {
+			callback({success:true});
+		}
     }
     function onCalculationFinished() {
-    	setTemplates(m_calculator.templates);
+    	m_cluster_data=m_calculator.cluster_data;
+    	update_panels();
+    	//setTemplates(m_calculator.templates);
+    }
+    function loadStaticView(X) {
+    	var calculator_output=X["calculator-output"]||{};
+		m_calculator.loadStaticOutput(calculator_output);
+    	O.recalculate();
     }
 
 	update_layout();

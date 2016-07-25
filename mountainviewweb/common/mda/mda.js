@@ -117,6 +117,10 @@ function Mda() {
 		}
 
 		s_mda_binary_loaders[url].load(function(ret) {
+			that.allocate(ret.mda.N1(),ret.mda.N2(),ret.mda.N3());
+			that.setData(ret.mda.data());
+			callback({success:true});
+			/*
 			if (ret.data.length>0) {
 				var dims=ret.dims;
 				that.allocate(dims[0],dims[1]||1,dims[2]||1,dims[3]||1,dims[4]||1);
@@ -126,8 +130,37 @@ function Mda() {
 			else {
 				callback({success:false});
 			}
+			*/
 		});
 	};
+	this.setFromArrayBuffer=function(buf) {
+		var X=new Int32Array(buf.slice(0,64));
+		var num_bytes_per_entry=X[1];
+		var num_dims=X[2];
+		m_dims=[];
+		if ((num_dims<2)||(num_dims>5)) {
+			console.error('Invalid number of dimensions: '+num_dims);
+			return false;
+		} 
+		for (var i=0; i<num_dims; i++) {
+			m_dims.push(X[3+i]);
+		}
+		var dtype=get_dtype_string(X[0]);
+		var header_size=(num_dims+3)*4;
+		if (dtype=='float32') {
+			m_data=new Float32Array(buf.slice(header_size));
+			return true;
+		}
+		else if (dtype=='float64') {
+			m_data=new Float64Array(buf.slice(header_size));
+			return true;	
+		}
+		else {
+			console.error('Unsupported dtype: '+dtype);
+			m_data=[];
+			return false;
+		}
+	}
 	this.minimum=function() {
 		if (m_data.length===0) return 0;
 		var ret=m_data[0];
@@ -144,8 +177,16 @@ function Mda() {
 		}
 		return ret;
 	};
+	function get_dtype_string(num) {
+		if (num==-2) return 'byte';
+		if (num==-3) return 'float32';
+		if (num==-4) return 'int16';
+		if (num==-5) return 'int32';
+		if (num==-6) return 'uint16';
+		if (num==-7) return 'float64';
+		return '';
+	}
 	
-
 	var m_data=new Float32Array(1);
 	var m_dims=[1,1,1,1,1];
 	var m_total_size=1;
@@ -159,7 +200,7 @@ function MdaBinaryLoader(url) {
 			return;
 		}
 		JSQ.connect(m_signaler,'loaded',0,function() {
-			callback({data:m_data.slice(),dims:JSQ.clone(m_dims)});	
+			callback({mda:m_mda});	
 		});
 		if (!m_is_loading) {
 			m_is_loading=true;
@@ -170,8 +211,7 @@ function MdaBinaryLoader(url) {
 	var m_signaler=new JSQObject();
 	var m_is_loading=false;
 	var m_done_loading=false;
-	var m_data=[];
-	var m_dims=[];
+	var m_mda=new Mda();
 
 	function start_loading() {
 		$.ajax({
@@ -187,6 +227,13 @@ function MdaBinaryLoader(url) {
 					m_signaler.emit('loaded');
 					return;
 				}
+				if (m_mda.setFromArrayBuffer(result)) {
+					m_signaler.emit('loaded');
+				}
+				else {
+					m_signaler.emit('loaded');
+				}
+				/*
 				var X=new Int32Array(result.slice(0,64));
 				var num_bytes_per_entry=X[1];
 				var num_dims=X[2];
@@ -219,17 +266,9 @@ function MdaBinaryLoader(url) {
 					m_signaler.emit('loaded');
 					return;
 				}
+				*/
 			}
 		});
-	}
-	function get_dtype_string(num) {
-		if (num==-2) return 'byte';
-		if (num==-3) return 'float32';
-		if (num==-4) return 'int16';
-		if (num==-5) return 'int32';
-		if (num==-6) return 'uint16';
-		if (num==-7) return 'float64';
-		return '';
 	}
 }
 
