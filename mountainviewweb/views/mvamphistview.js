@@ -10,10 +10,17 @@ function MVAmpHistView(O,mvcontext) {
 
 	var m_calculator=new MVAmpHistViewCalculator();
 	function prepareCalculation() {
-		m_calculator.firings=mvcontext.firings();
+		if (!mvcontext.staticMode()) {
+			m_calculator.firings=mvcontext.firings();
+		}
 	}
 	function runCalculation(opts,callback) {
-		m_calculator.run(opts,callback);
+		if (!mvcontext.staticMode()) {
+			m_calculator.run(opts,callback);
+		}
+		else {
+			callback({success:true});
+		}
 	}
 	function onCalculationFinished() {
 		m_histograms=m_calculator.histograms;

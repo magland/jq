@@ -40,34 +40,29 @@ function jsqmain(query) {
         MW.showFullBrowser();
         MW.setControlPanelVisible(false);
 
-        var urls=query.smvfiles;
-        if (!urls) {
-            alert('Missing url parameter: smvfiles.');
+        var url=query.smvfile;
+        if (!url) {
+            alert('Missing url parameter: smvfile.');
             return;
         }
-        urls=urls.split(';');
-        for (var i in urls) {
-            (function(i) {
-                var url=urls[i];
-                var container=get_container_from_index(i);
-                $.getJSON(url,function(data) {
-                    console.log(data);
-                    var VV=create_static_view(mvcontext,data);
-                    if (VV) {
-                        MW.addView(container,data['view-type'],VV);
-                    }
-                });
-            })(i);
-        }
+
+        $.getJSON(url,function(data) {
+            console.log(data);
+            mvcontext.setStaticMode(true);
+            mvcontext.setFromMVFileObject(data.mvcontext);
+            var static_views=data['static-views'];
+            for (var i in static_views) {
+                var SV=static_views[i];
+                var VV=create_static_view(mvcontext,SV.data);    
+                MW.addView(SV.container||get_container_from_index(i),SV.data['view-type'],VV);
+            }            
+        });
     }
     function get_container_from_index(i) {
         if (i%2==0) return 'north';
         else return 'south';
     }
     function create_static_view(mvcontext,obj) {
-        delete obj.mvcontext.firings;
-        delete obj.mvcontext.timeseries;
-        mvcontext.setFromMVFileObject(obj.mvcontext);
         var X;
         if (obj['view-type']=="MVCrossCorrelogramsWidget") {
             X=new MVCrossCorrelogramsView(0,mvcontext,obj.options.mode);

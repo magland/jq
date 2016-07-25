@@ -113,7 +113,6 @@ function MVTemplatesView(O,mvcontext) {
     	this.cluster_data=[];
 
     	this.loadStaticOutput=function(X) {loadStaticOutput(X);};
-    	this.loaded_from_static_output=false;
 
     	this.run=function(opts,callback) {
     		that.cluster_data=[];
@@ -156,7 +155,6 @@ function MVTemplatesView(O,mvcontext) {
 	    		CD.template0=mda_from_base64(CD.template0);
 	    		that.cluster_data.push(CD);
 	    	}
-	    	that.loaded_from_static_output=true;
 	    }
 	    function mda_from_base64(X) {
 	    	var buf=Base64Binary.decode(X).buffer;
@@ -167,13 +165,15 @@ function MVTemplatesView(O,mvcontext) {
     }
     var m_calculator=new Calculator();
     function prepareCalculation() {
-    	m_calculator.mlproxy_url=mvcontext.mlProxyUrl();
-    	m_calculator.firings=mvcontext.firings();
-    	m_calculator.timeseries=mvcontext.currentTimeseries();
-    	m_calculator.clip_size=mvcontext.option('clip_size');
+    	if (!mvcontext.staticMode()) {
+	    	m_calculator.mlproxy_url=mvcontext.mlProxyUrl();
+	    	m_calculator.firings=mvcontext.firings();
+	    	m_calculator.timeseries=mvcontext.currentTimeseries();
+	    	m_calculator.clip_size=mvcontext.option('clip_size');
+	    }
     }
     function runCalculation(opts,callback) {
-    	if (!m_calculator.loaded_from_static_output) {
+    	if (!mvcontext.staticMode()) {
 			m_calculator.run(opts,callback);
 		}
 		else {

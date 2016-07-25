@@ -17,14 +17,16 @@ function MVCrossCorrelogramsView(O,mvcontext,mode) {
 
 	var m_calculator=new MVCrossCorrelogramsViewCalculator();
 	function prepareCalculation() {
-		m_calculator.mlproxy_url=mvcontext.mlProxyUrl();
-		m_calculator.firings=mvcontext.firings();
-		m_calculator.max_dt=Number(mvcontext.option('cc_max_dt_msec',100))/1000*mvcontext.sampleRate();
-		m_calculator.mode=mode;
-		m_calculator.ks=JSQ.numSet2List(mvcontext.selectedClusters());
+		if (!mvcontext.staticMode()) {
+			m_calculator.mlproxy_url=mvcontext.mlProxyUrl();
+			m_calculator.firings=mvcontext.firings();
+			m_calculator.max_dt=Number(mvcontext.option('cc_max_dt_msec',100))/1000*mvcontext.sampleRate();
+			m_calculator.mode=mode;
+			m_calculator.ks=JSQ.numSet2List(mvcontext.selectedClusters());
+		}
 	}
 	function runCalculation(opts,callback) {
-		if (!m_calculator.loaded_from_static_output) {
+		if (!mvcontext.staticMode()) {
 			m_calculator.run(opts,callback);
 		}
 		else {

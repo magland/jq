@@ -3,6 +3,8 @@ function MVContext(O) {
 	JSQObject(O);
 
     this.setFromMVFileObject=function(obj) {setFromMVFileObject(obj);};
+    this.setStaticMode=function(val) {m_static_mode=val;};
+    this.staticMode=function() {return m_static_mode;};
 
     this.sampleRate=function() {return m_sample_rate;};
     this.setSampleRate=function(rate) {m_sample_rate=rate;};
@@ -45,6 +47,7 @@ function MVContext(O) {
     this.clickCluster=function(k,modifiers) {clickCluster(k,modifiers);};
 
     var m_original_object;
+    var m_static_mode=false;
 
     var m_sample_rate;
 
@@ -91,9 +94,15 @@ function MVContext(O) {
         m_cluster_attributes=JSQ.clone(obj.cluster_attributes||{});
         m_cluster_pair_attributes=JSQ.clone(obj.cluster_pair_attributes||{});
         //m_timeseries=JSQ.clone(obj["timeseries"]);
-        m_timeseries=new RemoteReadMda(); // TODO: fix this!!!!!!!
+        if (!m_static_mode)
+            m_timeseries=new RemoteReadMda(); // TODO: fix this!!!!!!!
+        else
+            m_timeseries=new Mda();
         //m_current_timeseries_name=obj.current_timeseries_name||''; //TODO: fix this!!!!!
-        m_firings=new RemoteReadMda(obj.firings||'');
+        if (!m_static_mode)
+            m_firings=new RemoteReadMda(obj.firings||'');
+        else
+            m_firings=new Mda();
         m_sample_rate=obj.samplerate||0;
         m_options=JSQ.clone(obj.options);
         m_mlproxy_url=obj.mlproxy_url;
