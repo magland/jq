@@ -22,6 +22,8 @@
 <script src="core/mvmainwindow.js"></script>
 <script src="core/mvabstractcontrolwidget.js"></script>
 <script src="core/mvpanelwidget.js"></script>
+<script src="core/tabber.js"></script>
+<script src="core/tabberframe.js"></script>
 <script src="views/mvtemplatesview.js"></script>
 <script src="views/histogramview.js"></script>
 <script src="views/mvhistogramgrid.js"></script>
@@ -34,7 +36,6 @@
 
 <script>
 $(document).ready(function() {
-
 	var query=parse_url_params();
 	jsqmain(query);
 });
@@ -45,13 +46,11 @@ function parse_url_params() {
 	search = /([^&=]+)=?([^&]*)/g,
 	decode = function (s) { return decodeURIComponent(s.replace(pl, " ")); },
 	query  = window.location.search.substring(1);
-
 	url_params = {};
 	while (match = search.exec(query))
 		url_params[decode(match[1])] = decode(match[2]);
 	return url_params;
 }
-
 </script>
 
 </head>

@@ -3,7 +3,7 @@ function MVMainWindow(O,mvcontext) {
 	JSQWidget(O);
 
 	this.addControlWidget=function(W) {m_control_panel.addControlWidget(W);};
-	this.addView=function(V,label) {addView(V,label);};
+	this.addView=function(container_name,label,V) {addView(container_name,label,V);};
 	this.setControlPanelVisible=function(val) {m_control_panel_visible=val; update_layout();};
 
 	JSQ.connect(O,'sizeChanged',O,update_layout);
@@ -11,15 +11,19 @@ function MVMainWindow(O,mvcontext) {
 	var m_control_panel=new MVControlPanel(0,mvcontext);
 	m_control_panel.setParent(O);
 	var m_views=[];
-	var m_tab_widget=new JSQTabWidget();
-	m_tab_widget.setParent(O);
 	var m_control_panel_visible=true;
 
-	function addView(V,label) {
+	var m_tabber=new Tabber();
+	var m_north_tab_widget=m_tabber.createTabWidget('north');
+	var m_south_tab_widget=m_tabber.createTabWidget('south');	
+	m_north_tab_widget.setParent(O);
+	m_south_tab_widget.setParent(O);
+
+	function addView(container_name,label,V) {
 		m_views.push({
 			V:V,label:label
 		});
-		m_tab_widget.addTab(V,label);
+		m_tabber.addWidget(container_name,label,V);
 		setTimeout(function() {
 			V.recalculate();
 		},10);
@@ -37,8 +41,10 @@ function MVMainWindow(O,mvcontext) {
 		m_control_panel.setSize(W1,O.height());
 		m_control_panel.setPosition(0,0);
 
-		m_tab_widget.setSize(W2,Math.min(W2*0.5,O.height()));
-		m_tab_widget.setPosition(W1,0);
-	}
+		m_north_tab_widget.setSize(W2,O.height()/2);
+		m_north_tab_widget.setPosition(W1,0);
 
+		m_south_tab_widget.setSize(W2,O.height()/2);
+		m_south_tab_widget.setPosition(W1,O.height()/2);
+	}
 }

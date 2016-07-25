@@ -22,35 +22,49 @@ function jsqmain(query) {
         var WW=new MVMainWindow(0,mvcontext);
         WW.showFullBrowser();
 
-        var VV=new MVTemplatesView(0,mvcontext);
-        WW.addView(VV,'Templates');
-
         var VV=new MVAmpHistView(0,mvcontext);
-        WW.addView(VV,'Amplitudes');
+        WW.addView('north','Amplitudes',VV);
+
+        var VV=new MVTemplatesView(0,mvcontext);
+        WW.addView('north','Templates',VV);
 
         var VV=new MVCrossCorrelogramsView(0,mvcontext,'All_Auto_Correlograms');
-        WW.addView(VV,'Auto-Correlograms');
+        WW.addView('south','Auto-Correlograms',VV);
 
         var GCW=new GeneralControlWidget(0,mvcontext,WW);
         WW.addControlWidget(GCW);
     }
     else if (query.test=='2') {
-        var url=query.smvfile;
-        if (!url) {
-            alert('Missing url parameter: smvfile.');
-            return;
-        }
-        $.getJSON(url,function(data) {
-            console.log(data);
-            open_static_view(data);
-        });
-    }
-    function open_static_view(obj) {
+        var mvcontext=new MVContext();
         var MW=new MVMainWindow(0,mvcontext);
         MW.showFullBrowser();
         MW.setControlPanelVisible(false);
 
-        var mvcontext=new MVContext();
+        var urls=query.smvfiles;
+        if (!urls) {
+            alert('Missing url parameter: smvfiles.');
+            return;
+        }
+        urls=urls.split(';');
+        for (var i in urls) {
+            (function(i) {
+                var url=urls[i];
+                var container=get_container_from_index(i);
+                $.getJSON(url,function(data) {
+                    console.log(data);
+                    var VV=create_static_view(mvcontext,data);
+                    if (VV) {
+                        MW.addView(container,data['view-type'],VV);
+                    }
+                });
+            })(i);
+        }
+    }
+    function get_container_from_index(i) {
+        if (i%2==0) return 'north';
+        else return 'south';
+    }
+    function create_static_view(mvcontext,obj) {
         delete obj.mvcontext.firings;
         mvcontext.setFromMVFileObject(obj.mvcontext);
         var X;
@@ -60,10 +74,10 @@ function jsqmain(query) {
         }
         else {
             alert('Unknown view-type: '+obj['view-type']);
-            return;
+            return 0;
         }    
         X.loadStaticView(obj);
-        MW.addView(X,obj['view-type']);
+        return X;
     }
 
     //var firings_url='http://localhost:8020/mdaserver/franklab/2016_04_08/sort_dl12_20151208_NNF_r1_tet16_17/output_tet16/firings.mda';

@@ -31,7 +31,7 @@ opts.SOURCEPATH.push('core')
 opts.SCRIPTS.push(
 	'mountainprocessrunner.js','mvabstractview.js','mvcontext.js',
 	'mvcontrolpanel.js','mvmainwindow.js','mvabstractcontrolwidget.js',
-	'mvpanelwidget.js'
+	'mvpanelwidget.js','tabber.js','tabberframe.js'
 );
 
 opts.SOURCEPATH.push('views')
