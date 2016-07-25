@@ -15,8 +15,10 @@ function JSQTabWidget(O) {
 	JSQ.connect(m_tab_bar,'tabClicked',O,on_tab_clicked);
 
 	function update_layout() {
-		var tab_bar_height=20;
-		var x0=0,y0=tab_bar_height;
+		var tab_bar_height=30;
+		var x0=0;
+		var y0=0;
+		//var y0=tab_bar_height;
 		var W0=O.width(),H0=O.height()-tab_bar_height;
 		for (var i in m_tabs) {
 			var TT=m_tabs[i];
@@ -24,6 +26,7 @@ function JSQTabWidget(O) {
 			TT.W.setPosition(x0,y0);
 		}
 		m_tab_bar.setSize(O.width,tab_bar_height);
+		m_tab_bar.setPosition(0,H0-2);
 	}
 	function update_visibility() {
 		for (var i in m_tabs) {

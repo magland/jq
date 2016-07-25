@@ -1,3 +1,13 @@
+body {
+	font: normal 11px auto "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+	color: #4f6b72;
+	background: #E6EAE9;
+}
+
+a {
+	color: #c75f3e;
+}
+
 .jsqpanelwidget_panel {
 	border: solid 2px gray
 }
@@ -6,15 +16,18 @@
 	border: solid 2px black
 }
 
-.JSQTabBar td {
+.JSQTabBar {
 	border-top: 1px solid lightgray;
+}
+.JSQTabBar td {
+	border-bottom: 1px solid lightgray;
 	border-right: 1px solid lightgray;
 	border-left: 1px solid lightgray;
 	background: lightgray;
 	color: gray;
 }
 .JSQTabBar td.current_tab {
-	border-top: 1px solid gray;
+	border-bottom: 1px solid gray;
 	border-right: 1px solid gray;
 	border-left: 1px solid gray;
 	background: white;
@@ -22,10 +35,11 @@
 }
 
 .JSQTabBar a {
+	font-size:20px;
 	text-decoration: none;
 	color: black;
 }
 
 .JSQTabBar {
-	border-bottom: solid 1px gray;
+	border-top: solid 1px lightgray;
 }
