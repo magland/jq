@@ -1,40 +1,49 @@
 function jsqmain(query) {
 	var context={};
-
-
-    var mlproxy_url='http://datalaboratory.org:8020';
-    var base_url='http://datalaboratory.org:8020/mdaserver/franklab/results/20160426_r1_nt16/ms_20160605';
-    var timeseries_url=base_url+'/pre2.mda';
-    var firings_url=base_url+'/firings_new.mda';
-
-    //var mlproxy_url='http://datalaboratory.org:8020';
-    //var base_url='http://datalaboratory.org:8020/mdaserver/NeuroCube/NC-1';
-    //var timeseries_url=base_url+'/pre2.mda';
-    //var firings_url=base_url+'/firings.mda';
     
+    if (query.test=='1') {
+        var mlproxy_url='http://datalaboratory.org:8020';
+        var base_url='http://datalaboratory.org:8020/mdaserver/franklab/results/20160426_r1_nt16/ms_20160605';
+        var timeseries_url=base_url+'/pre2.mda';
+        var firings_url=base_url+'/firings_new.mda';
 
-    var mvcontext=new MVContext();
-    mvcontext.setTimeseries(new RemoteReadMda(timeseries_url));
-    mvcontext.setFirings(new RemoteReadMda(firings_url));
-    mvcontext.setMLProxyUrl(mlproxy_url);
-    mvcontext.setOption('clip_size',150);
-    mvcontext.setOption('cc_max_dt_msec',100);
-    mvcontext.setSampleRate(30000);
+        //var timeseries_url='http://datalaboratory.org:8020/mdaserver/franklab/results/20160426_r1_nt16/ms_20160605/pre2.mda';
+        //var firings_url='http://datalaboratory.org:8020/mdaserver/franklab/results/20160426_r1_nt16/ms_20160605/firings_new.mda';
+        //var mlproxy_url='http://datalaboratory.org:8020';
 
-    var WW=new MVMainWindow(0,mvcontext);
-    WW.showFullBrowser();
+        var mvcontext=new MVContext();
+        mvcontext.setTimeseries(new RemoteReadMda(timeseries_url));
+        mvcontext.setFirings(new RemoteReadMda(firings_url));
+        mvcontext.setMLProxyUrl(mlproxy_url);
+        mvcontext.setOption('clip_size',150);
+        mvcontext.setOption('cc_max_dt_msec',100);
+        mvcontext.setSampleRate(30000);
 
-    var VV=new MVTemplatesView(0,mvcontext);
-    WW.addView(VV,'Templates');
+        var WW=new MVMainWindow(0,mvcontext);
+        WW.showFullBrowser();
 
-    var VV=new MVAmpHistView(0,mvcontext);
-    WW.addView(VV,'Amplitudes');
+        var VV=new MVTemplatesView(0,mvcontext);
+        WW.addView(VV,'Templates');
 
-    var VV=new MVCrossCorrelogramsView(0,mvcontext,'All_Auto_Correlograms');
-    WW.addView(VV,'Auto-Correlograms');
+        var VV=new MVAmpHistView(0,mvcontext);
+        WW.addView(VV,'Amplitudes');
 
-    var GCW=new GeneralControlWidget(0,mvcontext,WW);
-    WW.addControlWidget(GCW);
+        var VV=new MVCrossCorrelogramsView(0,mvcontext,'All_Auto_Correlograms');
+        WW.addView(VV,'Auto-Correlograms');
+
+        var GCW=new GeneralControlWidget(0,mvcontext,WW);
+        WW.addControlWidget(GCW);
+    }
+    else if (query.test=='2') {
+        var url='testdata/static_auto_correlograms.smv';
+        $.getJSON(url,function(data) {
+            console.log(data);
+            open_static_view(data);
+        });
+    }
+    function open_static_view() {
+        
+    }
 
     //var firings_url='http://localhost:8020/mdaserver/franklab/2016_04_08/sort_dl12_20151208_NNF_r1_tet16_17/output_tet16/firings.mda';
 

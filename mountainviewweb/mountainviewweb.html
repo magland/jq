@@ -34,9 +34,24 @@
 
 <script>
 $(document).ready(function() {
-	var query={};
+
+	var query=parse_url_params();
 	jsqmain(query);
 });
+
+function parse_url_params() {
+	var match,
+	pl     = /\+/g,  // Regex for replacing addition symbol with a space
+	search = /([^&=]+)=?([^&]*)/g,
+	decode = function (s) { return decodeURIComponent(s.replace(pl, " ")); },
+	query  = window.location.search.substring(1);
+
+	url_params = {};
+	while (match = search.exec(query))
+		url_params[decode(match[1])] = decode(match[2]);
+	return url_params;
+}
+
 </script>
 
 </head>
