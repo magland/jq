@@ -2,6 +2,8 @@ function MVContext(O) {
 	O=O||this;
 	JSQObject(O);
 
+    this.setFromMVFileObject=function(obj) {setFromMVFileObject(obj);};
+
     this.sampleRate=function() {return m_sample_rate;};
     this.setSampleRate=function(rate) {m_sample_rate=rate;};
 
@@ -41,6 +43,61 @@ function MVContext(O) {
     this.setCurrentTimepoint=function(t) {setCurrentTimepoint(t);};
     this.setCurrentTimeRange=function(range) {setCurrentTimeRange(JSQ.clone(range));};
     this.clickCluster=function(k,modifiers) {clickCluster(k,modifiers);};
+
+    var m_original_object;
+
+    var m_sample_rate;
+
+    var m_colors;
+    var m_channel_colors=[];
+    var m_cluster_colors=[];
+
+    var m_current_timepoint;
+    var m_current_cluster;
+    var m_current_event;
+    var m_current_time_range;
+    var m_selected_clusters;
+
+    var m_mlproxy_url;
+    var m_timeseries;
+    var m_firings;
+    var m_options;
+
+    clear();
+    function clear() {
+        m_original_object={};
+
+        m_sample_rate=0;
+
+        m_colors={};
+        m_channel_colors=mv_default_channel_colors();
+        m_cluster_colors=[];
+
+        m_current_timepoint=-1;
+        m_current_cluster=0;
+        m_current_event=[-1,-1];
+        m_current_time_range=[-1,-1];
+        m_selected_clusters={};
+
+        m_mlproxy_url='';
+        m_timeseries=new RemoteReadMda();
+        m_firings=new RemoteReadMda();
+        m_options={clip_size:100,cc_max_dt:100};        
+    }
+
+    function setFromMVFileObject(obj) {
+        clear();
+        m_original_object=JSQ.clone(obj); // to preserve unused fields
+        m_cluster_attributes=JSQ.clone(obj.cluster_attributes||{});
+        m_cluster_pair_attributes=JSQ.clone(obj.cluster_pair_attributes||{});
+        //m_timeseries=JSQ.clone(obj["timeseries"]);
+        m_timeseries=new RemoteReadMda(); // TODO: fix this!!!!!!!
+        //m_current_timeseries_name=obj.current_timeseries_name||''; //TODO: fix this!!!!!
+        m_firings=new RemoteReadMda(obj.firings||'');
+        m_sample_rate=obj.samplerate||0;
+        m_options=JSQ.clone(obj.options);
+        m_mlproxy_url=obj.mlproxy_url;
+    }
 
     function setCurrentEvent(E) {
     	if (JSQ.compare(E,m_current_event)) return;
@@ -113,22 +170,7 @@ function MVContext(O) {
     	else return default_color;
     }
 
-    var m_sample_rate=0;
-
-    var m_colors={};
-    var m_channel_colors=mv_default_channel_colors();
-    var m_cluster_colors=[];
-
-    var m_current_timepoint=-1;
-    var m_current_cluster=0;
-    var m_current_event=[-1,-1];
-    var m_current_time_range=[-1,-1];
-    var m_selected_clusters={};
-
-	var m_mlproxy_url='';
-	var m_timeseries=new RemoteReadMda();
-	var m_firings=new RemoteReadMda();
-	var m_options={clip_size:100,cc_max_dt:100};
+    
 }
 
 function mv_default_channel_colors() {

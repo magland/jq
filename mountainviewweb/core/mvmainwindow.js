@@ -4,6 +4,7 @@ function MVMainWindow(O,mvcontext) {
 
 	this.addControlWidget=function(W) {m_control_panel.addControlWidget(W);};
 	this.addView=function(V,label) {addView(V,label);};
+	this.setControlPanelVisible=function(val) {m_control_panel_visible=val; update_layout();};
 
 	JSQ.connect(O,'sizeChanged',O,update_layout);
 
@@ -12,6 +13,7 @@ function MVMainWindow(O,mvcontext) {
 	var m_views=[];
 	var m_tab_widget=new JSQTabWidget();
 	m_tab_widget.setParent(O);
+	var m_control_panel_visible=true;
 
 	function addView(V,label) {
 		m_views.push({
@@ -29,12 +31,13 @@ function MVMainWindow(O,mvcontext) {
 		var W1=W0/3;
 		if (W1<250) W1=250;
 		if (W1>800) W1=800;
+		if (!m_control_panel_visible) W1=0;
 		var W2=W0-W1;
 
 		m_control_panel.setSize(W1,O.height());
 		m_control_panel.setPosition(0,0);
 
-		m_tab_widget.setSize(W2,O.height());
+		m_tab_widget.setSize(W2,Math.min(W2*0.5,O.height()));
 		m_tab_widget.setPosition(W1,0);
 	}
 

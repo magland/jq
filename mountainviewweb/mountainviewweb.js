@@ -1,6 +1,6 @@
 function jsqmain(query) {
 	var context={};
-    
+
     if (query.test=='1') {
         var mlproxy_url='http://datalaboratory.org:8020';
         var base_url='http://datalaboratory.org:8020/mdaserver/franklab/results/20160426_r1_nt16/ms_20160605';
@@ -35,14 +35,35 @@ function jsqmain(query) {
         WW.addControlWidget(GCW);
     }
     else if (query.test=='2') {
-        var url='testdata/static_auto_correlograms.smv';
+        var url=query.smvfile;
+        if (!url) {
+            alert('Missing url parameter: smvfile.');
+            return;
+        }
         $.getJSON(url,function(data) {
             console.log(data);
             open_static_view(data);
         });
     }
-    function open_static_view() {
-        
+    function open_static_view(obj) {
+        var MW=new MVMainWindow(0,mvcontext);
+        MW.showFullBrowser();
+        MW.setControlPanelVisible(false);
+
+        var mvcontext=new MVContext();
+        delete obj.mvcontext.firings;
+        mvcontext.setFromMVFileObject(obj.mvcontext);
+        var X;
+        if (obj['view-type']=="MVCrossCorrelogramsWidget") {
+            console.log(obj.options.mode);
+            X=new MVCrossCorrelogramsView(0,mvcontext,obj.options.mode);
+        }
+        else {
+            alert('Unknown view-type: '+obj['view-type']);
+            return;
+        }    
+        X.loadStaticView(obj);
+        MW.addView(X,obj['view-type']);
     }
 
     //var firings_url='http://localhost:8020/mdaserver/franklab/2016_04_08/sort_dl12_20151208_NNF_r1_tet16_17/output_tet16/firings.mda';
