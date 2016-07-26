@@ -9,6 +9,7 @@ function HistogramView(O) {
     O.setDrawVerticalAxisAtZero=function(val) {m_draw_vertical_axis_at_zero=val;};
     O.setXRange=function(min0,max0) {m_xrange=[min0,max0]; O.update();};
     O.autoCenterXRange=function() {autoCenterXRange();};
+    O.setTitle=function(title) {m_title=title; O.update();};
 
     O.onMouseRelease(function(evt) {O.emit('clicked',evt.modifiers);});
 	
@@ -137,6 +138,17 @@ function HistogramView(O) {
     			painter.drawRect(R[0],R[1],R[2],R[3]);
     		}
     	}
+        if (m_title.length>0) {
+            var text_height=14;
+            var R=[m_margin_left,5,W-m_margin_left-m_margin_right,text_height];
+            var font=painter.font();
+            font.family='Arial'; font["pixel-size"]=text_height;
+            painter.setFont(font);
+            var pen=painter.pen();
+            pen.color=[100,60,60];
+            painter.setPen(pen);
+            painter.drawText(R,{AlignLeft:1,AlignTop:1},m_title);
+        }
     }
 
     function coord2pix(coord,W,H) {

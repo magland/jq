@@ -53,9 +53,15 @@ function MVCrossCorrelogramsView(O,mvcontext,mode) {
 			HV.setData(m_correlograms[ii].data);
 			//set colors
 			HV.setBins(bin_min,bin_max,num_bins);
-			HV.setProperty('k',m_correlograms[ii].k1);
-			HV.setProperty('k1',m_correlograms[ii].k1);
-			HV.setProperty('k2',m_correlograms[ii].k2);
+			HV.setProperty('k',k1);
+			HV.setProperty('k1',k1);
+			HV.setProperty('k2',k2);
+			if (pair_mode) {
+				HV.setTitle(k1+'/'+k2);
+			}
+			else {
+				HV.setTitle(k1);
+			}
 			histogram_views.push(HV);
 		}
     	O.setHistogramViews(histogram_views);
