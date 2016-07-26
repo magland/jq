@@ -2,7 +2,7 @@ function HistogramView(O) {
 	O=O||this;
 	JSQCanvasWidget(O);
 
-	O.setData=function(data) {m_data=data.slice(); m_update_required=true;};
+	O.setData=function(data) {m_data=data; m_update_required=true;};
 	O.setSecondData=function(data) {m_second_data=data.slice();};
 	O.setBins=function(bin_min,bin_max,num_bins) {setBins(bin_min,bin_max,num_bins);};
 	O.autoSetBins=function(num_bins) {autoSetBins(num_bins);};

@@ -18,6 +18,7 @@ function MVTemplatesView(O,mvcontext) {
 	m_panel_widget.setParent(O);
 	var m_template_panels=[];
 	var m_vscale_factor=2;
+	var m_total_time_sec=0;
 
 	m_panel_widget.onPanelClicked(panelClicked);
 
@@ -48,7 +49,8 @@ function MVTemplatesView(O,mvcontext) {
 		m_cluster_data=[];
 		for (var k=0; k<K; k++) {
 			var CD={
-				template0:templates.subArray(0,0,k,M,T,1)
+				template0:templates.subArray(0,0,k,M,T,1),
+				k:k+1
 			};
 			m_cluster_data.push(CD);
 		}
@@ -59,10 +61,14 @@ function MVTemplatesView(O,mvcontext) {
 		m_template_panels=[];
 		for (var k=0; k<m_cluster_data.length; k++) {
 			var CD=m_cluster_data[k];
+			if (m_total_time_sec)
+				CD.firing_rate=CD.num_events/m_total_time_sec;
+			else
+				CD.firing_rate=0;
 			var Y=new MVTemplatesViewPanel();
-			Y.setProperty('k',CD.k||(k+1));
+			Y.setProperty('k',CD.k);
 			Y.setChannelColors(mvcontext.channelColors());
-			Y.setTemplate(CD.template0);
+			Y.setClusterData(CD);
 			m_panel_widget.addPanel(0,k,Y);
 			m_template_panels.push(Y);
 		}
@@ -141,6 +147,7 @@ function MVTemplatesView(O,mvcontext) {
 		            	var template0=templates0.subArray(0,0,k,M,T,1);
 		            	var CD={};
 		            	CD.template0=template0;
+		            	CD.k=k+1;
 		            	that.cluster_data.push(CD);
 		            }
 	                callback({success:true});
@@ -188,12 +195,147 @@ function MVTemplatesView(O,mvcontext) {
     function loadStaticView(X) {
     	var calculator_output=X["calculator-output"]||{};
 		m_calculator.loadStaticOutput(calculator_output);
+		var info=X.info||{};
+		m_total_time_sec=info.total_time_sec||0;
     	O.recalculate();
     }
 
 	update_layout();
 }
 
+function MVTemplatesViewPanel(O) {
+	O=O||this;
+	JSQCanvasWidget(O);
+	O.div().addClass('MVTemplatesViewPanel');
+
+	this.setChannelColors=function(list) {m_channel_colors=JSQ.clone(list);};
+	this.setClusterData=function(D) {m_CD=D;}; //don't clone because it has mda's
+	this.setVerticalScaleFactor=function(factor) {
+		m_vert_scale_factor=factor;
+		O.update();
+	};
+
+	var m_vert_scale_factor=1;
+	var m_channel_colors=[];
+	var m_CD={};
+	var m_top_rect = [0,0,0,0]; 
+	var m_template_rect = [0,0,0,0];
+	var m_bottom_rect = [0,0,0,0];
+
+	O.onPaint(paint);
+
+	function paint(painter) {
+		var template0=m_CD.template0;
+		var M=template0.N1();
+		var T=template0.N2();
+		var W0=O.width();
+		var H0=O.height();
+		var Tmid = Math.floor((T + 1) / 2) - 1;
+		var top_height=20;
+		var bottom_height=30;
+		var xmargin=1,ymargin=8;
+
+		var rect2=[0+xmargin,0+ymargin,W0-xmargin*2,H0-ymargin*2];
+		m_top_rect=[rect2[0],rect2[1],rect2[2],top_height];
+		m_template_rect=[rect2[0],rect2[1]+top_height,rect2[2],rect2[3]-bottom_height-top_height];		
+		m_bottom_rect=[rect2[0],rect2[1]+rect2[3]-bottom_height,rect2[2],bottom_height];
+
+		//firing rate disk
+	    {
+	    	var disksize=get_disksize_for_firing_rate(m_CD.firing_rate);
+	    	console.log(m_CD.firing_rate);
+	    	painter.setBrush({color:'lightgray'});
+	    	var ww=Math.min(m_bottom_rect[2],m_bottom_rect[3])*disksize;
+	    	var tmp=[m_bottom_rect[0],m_bottom_rect[1]+m_bottom_rect[3]-ww,ww,ww];
+	    	tmp[0]=tmp[0]+(m_bottom_rect[2]-ww)/2;
+	    	tmp[1]=tmp[1]-(m_bottom_rect[3]-ww)/2;
+	    	console.log(tmp);
+	    	painter.fillEllipse(tmp);
+	    }
+
+	    // group label
+		{
+			painter.setBrush({color:'gray'});
+			var group_label=m_CD.k;
+			var txt=group_label;
+			var font=painter.font();
+	        font["pixel-size"]=12;
+	        painter.setFont(font);
+
+	        var pen=painter.pen();
+	        pen.width=1;
+	        pen.color='darkblue';
+	        painter.setPen(pen);
+	        painter.drawText(m_top_rect, {AlignCenter:1,AlignBottom:1}, txt);
+	    }
+
+		{
+			//the midline
+			var view_background=[245,245,245];
+			var midline_color=lighten(view_background,0.9);
+			var pt0=coord2pix(0,Tmid,0);
+			var pen=painter.pen(); pen.color=midline_color; pen.width=1;
+			painter.setPen(pen);
+			painter.drawLine(pt0[0],0,pt0[0],H0);
+		}
+
+		// render the templates
+		for (var m=0; m<M; m++) {
+			var col=get_channel_color(m+1);
+			var pen=painter.pen(); pen.color=col; pen.width=1;
+			painter.setPen(pen);
+			{
+				//the template
+				var ppath=new JSQPainterPath();
+				for (var t=0; t<T; t++) {
+					var val=template0.value(m,t);
+					var pt=coord2pix(m,t,val);
+					if (t===0) ppath.moveTo(pt);
+					else ppath.lineTo(pt);
+				}
+				painter.drawPath(ppath);
+			}
+		}
+
+		
+    }
+
+    function get_disksize_for_firing_rate(firing_rate) {
+    	return Math.min(1,Math.sqrt(firing_rate/10));
+    }
+
+    function coord2pix(m,t,val) {
+    	var template0=m_CD.template0;
+    	var M=template0.N1();
+    	var T=template0.N2();
+    	var W0=O.size()[0];
+    	var H0=O.size()[1];
+    	var pctx=0,pcty=0;
+    	if (T) pctx=(t+0.5)/T;
+    	if (M) pcty=(m+0.5-val*m_vert_scale_factor)/M;
+    	var margx=4,margy=5;
+    	var x0=m_template_rect[0]+margx+pctx*(m_template_rect[2]-margx*2);
+    	var y0=m_template_rect[1]+margy+pcty*(m_template_rect[3]-margy*2);
+    	return [x0,y0];
+    }
+
+	function lighten(col,val) {
+		var ret=[col[0]*val,col[1]*val,col[2]*val];
+		ret=[Math.min(255,ret[0]),Math.min(255,ret[1]),Math.min(255,ret[2])];
+		return ret;
+	}
+
+	function get_channel_color(m) {
+		if (m <= 0)
+	        return [0,0,0];
+	    if (m_channel_colors.length===0)
+	        return [0,0,0];
+	    return m_channel_colors[(m - 1) % m_channel_colors.length];	
+	}
+}
+
+
+/*
 function MVTemplatesViewPanel(O) {
 	O=O||this;
 	JSQCanvasWidget(O);
@@ -276,3 +418,4 @@ function MVTemplatesViewPanel(O) {
 	}
 }
 
+*/
