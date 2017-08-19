@@ -1,11 +1,12 @@
 function jsqmain(query) {
 	var context={};
 
-    if (!query.filebasket) query.filebasket='http://datalaboratory.org:8041'
+    //if (!query.filebasket) query.filebasket='http://datalaboratory.org:8041'
 
     {
         var mvcontext=new MVContext();
 
+        /*
         var filebasket_url=query.filebasket;
         if (!filebasket_url) {
             alert('Missing url parameter: filebasket.');
@@ -18,12 +19,17 @@ function jsqmain(query) {
         }
 
         var url=filebasket_url+'/?a=download&file_id='+file_id;
+        */
 
         var MW=new MVMainWindow(0,mvcontext);
         MW.showFullBrowser();
         MW.setControlPanelVisible(false);
-        MW.setStatus('load-main','Loading data from '+url+'.... please wait...');
 
+        var X=new MVTemplatesView(0,mvcontext);
+        MW.addView('north','title',X);
+        //MW.setStatus('load-main','Loading data from '+url+'.... please wait...');
+
+        /*
         $.getJSON(url,function(data) {
             MW.setStatus('load-main','Loaded data from '+url);
             console.log(data);
@@ -41,6 +47,7 @@ function jsqmain(query) {
             }  
             MW.setStatus('load-static-views','Loaded '+static_views.length+' static views');
         });
+        */
     }
     function get_container_from_index(i) {
         if (i%2===0) return 'north';

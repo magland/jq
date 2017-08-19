@@ -1,12 +1,9 @@
-var jsqmake=require('../jsqmake/jsqmake').jsqmake;
-
+//////////////////////////////////////////////////////////////////////
 var opts={PROJECTPATH:__dirname, SOURCEPATH:['.'], SCRIPTS:[], STYLESHEETS:[]};
-opts.TARGET = 'mountainviewweb.html';
 
-opts.SCRIPTS.push('mountainviewweb.js');
-opts.STYLESHEETS.push('mountainviewweb.css');
-
-opts.SOURCEPATH.push('../jsqcore')
+//////////////////////////////////////////////////////////////////////
+//require('../../jsqcore/jsqcore.pri').load(opts);
+opts.SOURCEPATH.push('../../src/jsqcore')
 opts.SCRIPTS.push(
 	'jquery.min.js','jsq.js','jsqobject.js','jsqwidget.js','jsqcanvaswidget.js'
 );
@@ -14,10 +11,18 @@ opts.STYLESHEETS.push(
 	'jsq.css'
 );
 
-opts.SOURCEPATH.push('../jsqwidgets')
+//////////////////////////////////////////////////////////////////////
+//require('../../jsqwidgets/jsqwidgets.pri').load(opts);
+opts.SOURCEPATH.push('../../src/jsqwidgets')
 opts.SCRIPTS.push(
 	'jsqcanvaswidget.js','jsqtabwidget.js'
 );
+
+//////////////////////////////////////////////////////////////////////
+opts.TARGET = 'mountainviewweb.html';
+opts.SCRIPTS.push('mountainviewweb.js');
+opts.STYLESHEETS.push('mountainviewweb.css');
+
 
 opts.SOURCEPATH.push('common/mda')
 opts.SCRIPTS.push(
@@ -44,4 +49,5 @@ opts.SCRIPTS.push(
 	'generalcontrolwidget.js'
 );
 
-jsqmake(opts);
+//////////////////////////////////////////////////////////////////////
+require('../../jsqmake/jsqmake').jsqmake(opts);
