@@ -8,7 +8,7 @@ function jsqmain(query) {
     }
     else if (query.config_url) {
         console.log(atob(query.config_url));
-        $.get(atob(query.config_url),function(txt) {
+        $.get(atob(query.config_url),'',function(txt) {
             config=JSON.parse(txt);
             load_from_config(config);
         });
