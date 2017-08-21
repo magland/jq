@@ -1,6 +1,8 @@
+#!/usr/bin/env nodejs
+
 // Instructions:
 // npm install connect serve-static
-// nodejs start_server.js [port_number]
+// nodejs start_server.js [port_number] [directory]
 var connect = require('connect');
 var args=process.argv.slice(2);
 var listen_port=args[0]||8040;

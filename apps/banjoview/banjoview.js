@@ -1,19 +1,33 @@
 function jsqmain(query) {
-
-    console.log(JSON.stringify(query));
+    console.log('query='+JSON.stringify(query));
     var config=null;
     var config_str=query.config||'';
     if (query.config) {
         config=JSON.parse(atob(query.config));
+        load_from_config(config);
     }
-
-    if (!config) {
+    else if (query.config_url) {
+        console.log(atob(query.config_url));
+        $.get(atob(query.config_url),function(txt) {
+            config=JSON.parse(txt);
+            load_from_config(config);
+        });
+    }
+    else {
         config={views:[{
                     view_type:'templates',
                     templates_url:'http://river.simonsfoundation.org:60001/prvbucket/templates0.mda',
                     container:'north',
                     label:'Templates'
                 }]};
+        load_from_config(config);
+    }
+}
+
+function load_from_config(config) {
+
+    if (!config) {
+        
     }
 
     var mvcontext=new MVContext();
