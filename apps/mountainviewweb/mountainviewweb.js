@@ -25,8 +25,14 @@ function jsqmain(query) {
         MW.showFullBrowser();
         MW.setControlPanelVisible(false);
 
-        var X=new MVTemplatesView(0,mvcontext);
-        MW.addView('north','title',X);
+        
+        var A=new Mda();
+        A.load('files/test.mda',function() {
+        	var X=new MVTemplatesView(0,mvcontext);
+        	X.setTemplates(A);
+        	MW.addView('north','Templates',X);
+        });
+
         //MW.setStatus('load-main','Loading data from '+url+'.... please wait...');
 
         /*

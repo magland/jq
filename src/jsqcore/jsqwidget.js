@@ -157,7 +157,6 @@ function JSQWidget(O) {
 		};
 	}
 	function setVisible(visible) {
-		console.log('setVisible: '+visible);
 		if (visible) m_div.css({visibility:'visible'});
 		else m_div.css({visibility:'hidden'});
 	}

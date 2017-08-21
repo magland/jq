@@ -31,7 +31,6 @@ function JSQTabWidget(O) {
 	function update_visibility() {
 		for (var i in m_tabs) {
 			var TT=m_tabs[i];
-			console.log('setVisible '+i+' '+(i==m_current_tab_index));
 			TT.W.setVisible(i==m_current_tab_index);
 		}
 	}
@@ -48,10 +47,8 @@ function JSQTabWidget(O) {
 		}
 	}
 	function set_current_tab_index_by_name(name) {
-		console.log('test');
 		for (var i in m_tabs) {
 			if (m_tabs[i].name==name) {
-				console.log('test');
 				set_current_tab_index(i);
 				return;
 			}
@@ -71,7 +68,6 @@ function JSQTabWidget(O) {
 	}
 
 	function on_tab_clicked(sender,name) {
-		console.log('on_tab_clicked '+name);
 		set_current_tab_index_by_name(name);
 	}
 }

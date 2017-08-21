@@ -1,6 +1,27 @@
-function Mda() {
+function Mda(arg1,arg2,arg3,arg4,arg5) {
 	var that=this;
-	this.allocate=function(n1,n2,n3,n4,n5) {
+	this.allocate=function(n1,n2,n3,n4,n5) {return _allocate(n1,n2,n3,n4,n5);};
+	this.N1=function() {return _N1();};
+	this.N2=function() {return _N2();};
+	this.N3=function() {return _N3();};
+	this.N4=function() {return _N4();};
+	this.N5=function() {return _N5();};
+	this.totalSize=function() {return _totalSize();};
+	this.value=function(i1,i2,i3,i4,i5) {return _value(i1,i2,i3,i4,i5);};
+	this.setValue=function(val,i1,i2,i3,i4,i5) {return _setValue(val,i1,i2,i3,i4,i5);};
+	this.data=function() {return _data();};
+	this.dataCopy=function() {return _dataCopy();};
+	this.setData=function(data) {return _setData(data);};
+	this.clone=function() {return _clone();};
+	this.reshape=function(n1,n2,n3,n4,n5) {return _reshape(n1,n2,n3,n4,n5);};
+	this.getChunk=function(i,size) {return _getChunk(i,size);};
+	this.subArray=function(arg1,arg2,arg3,arg4,arg5,arg6) {return _subArray(arg1,arg2,arg3,arg4,arg5,arg6);};
+	this.load=function(url,callback) {return _load(url,callback);};
+	this.setFromArrayBuffer=function(buf) {return _setFromArrayBuffer(buf);};
+	this.minimum=function() {return _minimum();};
+	this.maximum=function() {return _maximum();};
+	
+	function _allocate(n1,n2,n3,n4,n5) {
 		n1=n1||1; n2=n2||1; n3=n3||1;
 		n4=n4||1; n5=n5||1;
 		m_total_size=n1*n2*n3*n4*n5;
@@ -8,79 +29,79 @@ function Mda() {
 		m_data=new Float32Array(m_total_size);
 		for (var i=0; i<m_total_size; i++) m_data[i]=0;
 	};
-	this.N1=function() {return m_dims[0];};
-	this.N2=function() {return m_dims[1];};
-	this.N3=function() {return m_dims[2];};
-	this.N4=function() {return m_dims[3];};
-	this.N5=function() {return m_dims[4];};
-	this.totalSize=function() {return m_total_size;};
-	this.value=function(i1,i2,i3,i4,i5) {
+	function _N1() {return m_dims[0];};
+	function _N2() {return m_dims[1];};
+	function _N3() {return m_dims[2];};
+	function _N4() {return m_dims[3];};
+	function _N5() {return m_dims[4];};
+	function _totalSize() {return m_total_size;};
+	function _value(i1,i2,i3,i4,i5) {
 		if (i2===undefined) {
 			return m_data[i1];
 		}
 		else if (i3===undefined) {
-			return this.value(i1+m_dims[0]*i2);
+			return that.value(i1+m_dims[0]*i2);
 		}
 		else if (i4===undefined) {
-			return this.value(i1+m_dims[0]*i2+m_dims[0]*m_dims[1]*i3);
+			return that.value(i1+m_dims[0]*i2+m_dims[0]*m_dims[1]*i3);
 		}
 		else if (i5===undefined) {
-			return this.value(i1+m_dims[0]*i2+m_dims[0]*m_dims[1]*i3+m_dims[0]*m_dims[1]*m_dims[2]*i4);
+			return that.value(i1+m_dims[0]*i2+m_dims[0]*m_dims[1]*i3+m_dims[0]*m_dims[1]*m_dims[2]*i4);
 		}
 		else {
-			return this.value(i1 +m_dims[0]*i2 +m_dims[0]*m_dims[1]*i3 +m_dims[0]*m_dims[1]*m_dims[2]*i4 +m_dims[0]*m_dims[1]*m_dims[2]*m_dims[3]*i5);
+			return that.value(i1 +m_dims[0]*i2 +m_dims[0]*m_dims[1]*i3 +m_dims[0]*m_dims[1]*m_dims[2]*i4 +m_dims[0]*m_dims[1]*m_dims[2]*m_dims[3]*i5);
 		}
 	};
-	this.setValue=function(val,i1,i2,i3,i4,i5) {
+	function _setValue(val,i1,i2,i3,i4,i5) {
 		if (i2===undefined) {
 			m_data[i1]=val;
 		}
 		else if (i3===undefined) {
-			this.setValue(val,i1+m_dims[0]*i2);
+			that.setValue(val,i1+m_dims[0]*i2);
 		}
 		else if (i4===undefined) {
-			this.setValue(val,i1+m_dims[0]*i2+m_dims[0]*m_dims[1]*i3);
+			that.setValue(val,i1+m_dims[0]*i2+m_dims[0]*m_dims[1]*i3);
 		}
 		else if (i5===undefined) {
-			this.setValue(val,i1+m_dims[0]*i2+m_dims[0]*m_dims[1]*i3+m_dims[0]*m_dims[1]*m_dims[2]*i4);
+			that.setValue(val,i1+m_dims[0]*i2+m_dims[0]*m_dims[1]*i3+m_dims[0]*m_dims[1]*m_dims[2]*i4);
 		}
 		else {
-			this.setValue(val,i1 +m_dims[0]*i2 +m_dims[0]*m_dims[1]*i3 +m_dims[0]*m_dims[1]*m_dims[2]*i4 +m_dims[0]*m_dims[1]*m_dims[2]*m_dims[3]*i5);
+			that.setValue(val,i1 +m_dims[0]*i2 +m_dims[0]*m_dims[1]*i3 +m_dims[0]*m_dims[1]*m_dims[2]*i4 +m_dims[0]*m_dims[1]*m_dims[2]*m_dims[3]*i5);
 		}
 	};
-	this.data=function() {return m_data;};
-	this.dataCopy=function() {
+	function _data() {return m_data;};
+	function _dataCopy() {
 		var ret=new Float32Array(m_total_size);
 		for (var i=0; i<m_total_size.length; i++) {
 			ret[i]=m_data[i];
 		}
 		return ret;
 	};
-	this.setData=function(data) {
+	function _setData(data) {
 		m_data=data;
 	};
-	this.clone=function() {
+	function _clone() {
 		var ret=new Mda();
-		ret.allocate(this.N1(),this.N2(),this.N3(),this.N4(),this.N5());
-		ret.setData(this.dataCopy());
+		ret.allocate(that.N1(),that.N2(),that.N3(),that.N4(),that.N5());
+		ret.setData(that.dataCopy());
 		return ret;
 	};
-	this.reshape=function(n1,n2,n3,n4,n5) {
+	function _reshape(n1,n2,n3,n4,n5) {
 		n2=n2||1; n3=n3||1; n4=n4||1; n5=n5||1;
 		var tot=n1*n2*n3*n4*n5;
 		if (tot!=m_total_size) {
-			console.error('Unable to reshape... incompatible size: '+n1+'x'+n2+'x'+n3+'x'+n4+'x'+n5+'    '+this.N1()+'x'+this.N2()+'x'+this.N3()+'x'+this.N4()+'x'+this.N5());
+			console.error('Unable to reshape... incompatible size: '+n1+'x'+n2+'x'+n3+'x'+n4+'x'+n5+'    '+that.N1()+'x'+that.N2()+'x'+that.N3()+'x'+that.N4()+'x'+that.N5());
 			return;
 		}
 		m_dims[0]=n1; m_dims[1]=n2; m_dims[2]=n3; m_dims[3]=n4; m_dims[4]=n5;		
 	};
-	this.getChunk=function(i,size) {
+	function _getChunk(i,size) {
 		var ret=new Mda();
 		ret.allocate(size,1);
 		ret.setData(m_data.subarray(i,i+size));
 		return ret;
 	};
-	this.subArray=function(arg1,arg2,arg3,arg4,arg5,arg6) {
+	function _subArray(arg1,arg2,arg3,arg4,arg5,arg6) {
 		if (arg3===undefined) {
 			return that.getChunk(arg1,arg2);
 		}
@@ -91,7 +112,7 @@ function Mda() {
 			}
 			var iii=arg2*that.N1();
 			var sss=arg4*that.N1();
-			var ret=this.getChunk(iii,sss);
+			var ret=that.getChunk(iii,sss);
 			ret.reshape(arg3,arg4);
 			return ret;
 		}
@@ -106,17 +127,19 @@ function Mda() {
 			}
 			var iii=arg3*that.N1()*that.N2();
 			var sss=arg6*that.N1()*that.N2();
-			var ret=this.getChunk(iii,sss);
+			var ret=that.getChunk(iii,sss);
 			ret.reshape(arg4,arg5,arg6);
 			return ret;
 		}
 	};
-	this.load=function(url,callback) {
+	function _load(url,callback) {
 		if (!(url in s_mda_binary_loaders)) {
 			s_mda_binary_loaders[url]=new MdaBinaryLoader(url);
 		}
 
+		console.log('test1');
 		s_mda_binary_loaders[url].load(function(ret) {
+			console.log('test2');
 			that.allocate(ret.mda.N1(),ret.mda.N2(),ret.mda.N3());
 			that.setData(ret.mda.data());
 			callback({success:true});
@@ -133,7 +156,7 @@ function Mda() {
 			*/
 		});
 	};
-	this.setFromArrayBuffer=function(buf) {
+	function _setFromArrayBuffer(buf) {
 		var X=new Int32Array(buf.slice(0,64));
 		var num_bytes_per_entry=X[1];
 		var num_dims=X[2];
@@ -161,7 +184,7 @@ function Mda() {
 			return false;
 		}
 	}
-	this.minimum=function() {
+	function _minimum() {
 		if (m_data.length===0) return 0;
 		var ret=m_data[0];
 		for (var i=0; i<m_data.length; i++) {
@@ -169,7 +192,7 @@ function Mda() {
 		}
 		return ret;
 	};
-	this.maximum=function() {
+	function _maximum() {
 		if (m_data.length===0) return 0;
 		var ret=m_data[0];
 		for (var i=0; i<m_data.length; i++) {
@@ -190,6 +213,8 @@ function Mda() {
 	var m_data=new Float32Array(1);
 	var m_dims=[1,1,1,1,1];
 	var m_total_size=1;
+
+	that.allocate(arg1||1,arg2||1,arg3||1,arg4||1,arg5||1);
 }
 
 var s_mda_binary_loaders={};
@@ -220,7 +245,11 @@ function MdaBinaryLoader(url) {
 			dataType: "binary",
 			processData: false,
 			responseType: 'arraybuffer',
-			success: function(result){
+			error: function(jqXHR, textStatus, errorThrown) {
+				console.log(url);
+				console.log('Error: '+textStatus+': '+errorThrown);
+			},
+			success: function(result) {
 				if (result.byteLength<64) {
 					console.error('Downloaded file is too small: '+result.byteLength);
 					m_data=[];

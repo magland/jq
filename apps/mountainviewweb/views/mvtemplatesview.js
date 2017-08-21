@@ -3,6 +3,8 @@ function MVTemplatesView(O,mvcontext) {
 	MVAbstractView(O,mvcontext);
 	O.div().addClass('MVTemplatesView');
 
+	this.setTemplates=function(templates) {m_templates_have_been_set=true; return setTemplates(templates);};
+
 	O.prepareCalculation=function() {prepareCalculation();};
 	O.runCalculation=function(opts,callback) {runCalculation(opts,callback);};
 	O.onCalculationFinished=function() {onCalculationFinished();};
@@ -17,8 +19,9 @@ function MVTemplatesView(O,mvcontext) {
 	var m_panel_widget=new MVPanelWidget();
 	m_panel_widget.setParent(O);
 	var m_template_panels=[];
-	var m_vscale_factor=2;
+	var m_vscale_factor=1;
 	var m_total_time_sec=0;
+	var m_templates_have_been_set=false;
 
 	m_panel_widget.onPanelClicked(panelClicked);
 
@@ -47,10 +50,10 @@ function MVTemplatesView(O,mvcontext) {
 		var T=templates.N2();
 		var K=templates.N3();
 		m_cluster_data=[];
-		for (var k=0; k<K; k++) {
+		for (var k=1; k<=K; k++) {
 			var CD={
-				template0:templates.subArray(0,0,k,M,T,1),
-				k:k+1
+				template0:templates.subArray(0,0,k-1,M,T,1),
+				k:k
 			};
 			m_cluster_data.push(CD);
 		}
@@ -121,7 +124,30 @@ function MVTemplatesView(O,mvcontext) {
     	this.loadStaticOutput=function(X) {loadStaticOutput(X);};
 
     	this.run=function(opts,callback) {
+
+    		if (!that.firings) {
+    			callback({success:false,error:'input: firings is empty'});
+    			return;
+    		}
+
     		that.cluster_data=[];
+
+    		for (var k=1; k<=20; k++) {
+	    		var CD={};
+	    		var M=4,T=80;
+	    		var template0=new Mda(M,T);
+	        	for (var t=0; t<T; t++) {
+	        		for (var m=0; m<M; m++) {
+	        			template0.setValue(Math.sin((3*(m+1)*t)/T*2*Math.PI),m,t);
+	        		}
+	        	}
+	        	CD.template0=template0;
+	        	CD.k=k;
+	        	that.cluster_data.push(CD);
+	        }
+	        callback({success:true});
+
+			/*
 
 	    	var X=new MountainProcessRunner();
 	        X.setProcessorName("mv_compute_templates");
@@ -153,6 +179,7 @@ function MVTemplatesView(O,mvcontext) {
 	                callback({success:true});
 	            });
 	        });
+	        */
 	    };
 	    function loadStaticOutput(X) {
 	    	that.cluster_data=[];
@@ -172,7 +199,7 @@ function MVTemplatesView(O,mvcontext) {
     }
     var m_calculator=new Calculator();
     function prepareCalculation() {
-    	if (!mvcontext.staticMode()) {
+    	if ((!m_templates_have_been_set)&&(!mvcontext.staticMode())) {
 	    	m_calculator.mlproxy_url=mvcontext.mlProxyUrl();
 	    	m_calculator.firings=mvcontext.firings();
 	    	m_calculator.timeseries=mvcontext.currentTimeseries();
@@ -180,7 +207,7 @@ function MVTemplatesView(O,mvcontext) {
 	    }
     }
     function runCalculation(opts,callback) {
-    	if (!mvcontext.staticMode()) {
+    	if ((!m_templates_have_been_set)&&(!mvcontext.staticMode())) {
 			m_calculator.run(opts,callback);
 		}
 		else {
@@ -188,8 +215,10 @@ function MVTemplatesView(O,mvcontext) {
 		}
     }
     function onCalculationFinished() {
-    	m_cluster_data=m_calculator.cluster_data;
-    	update_panels();
+    	if (!m_templates_have_been_set) {
+	    	m_cluster_data=m_calculator.cluster_data;
+	    	update_panels();
+	    }
     	//setTemplates(m_calculator.templates);
     }
     function loadStaticView(X) {
@@ -243,13 +272,11 @@ function MVTemplatesViewPanel(O) {
 		//firing rate disk
 	    {
 	    	var disksize=get_disksize_for_firing_rate(m_CD.firing_rate);
-	    	console.log(m_CD.firing_rate);
 	    	painter.setBrush({color:'lightgray'});
 	    	var ww=Math.min(m_bottom_rect[2],m_bottom_rect[3])*disksize;
 	    	var tmp=[m_bottom_rect[0],m_bottom_rect[1]+m_bottom_rect[3]-ww,ww,ww];
 	    	tmp[0]=tmp[0]+(m_bottom_rect[2]-ww)/2;
 	    	tmp[1]=tmp[1]-(m_bottom_rect[3]-ww)/2;
-	    	console.log(tmp);
 	    	painter.fillEllipse(tmp);
 	    }
 
